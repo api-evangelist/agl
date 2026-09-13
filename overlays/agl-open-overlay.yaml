@@ -1,0 +1,30 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for AGL OPEN API
+  version: 1.0.0
+x-generated: '2026-09-12'
+x-method: generated
+x-source: api-evangelist enrichment pipeline, derived from the harvested original spec
+extends: openapi/agl-open-openapi-original.yml
+actions:
+- target: $.info
+  update:
+    x-apievangelist-slug: agl
+    x-apievangelist-provider: AGL Inc.
+    x-apievangelist-harvested-from: https://api-docs-agl-bridgeapi.tigergds.com/reference
+    x-apievangelist-harvest-date: '2026-09-12'
+    x-error-envelope: isSuccess / rstCd / rstMsg / statusCode; 400 carries FailResponse.
+    x-idempotency: none
+    x-sandbox-status: The declared sandbox host sandbox-agl-bridgeapi.tigergds.com did not resolve (NXDOMAIN) when
+      probed 2026-09-12.
+- target: $.paths['/reservation'].post
+  update:
+    x-callback-direction: AGL calls the supplier - this operation is implemented by the supplier, not by AGL.
+    x-apievangelist-event: reservation.request
+- target: $.paths['/reservation/cancel'].post
+  update:
+    x-callback-direction: AGL calls the supplier - this operation is implemented by the supplier, not by AGL.
+    x-apievangelist-event: reservation.cancel
+- target: $.paths['/api/golfclub'].post
+  update:
+    x-agentic-reversal: none - the contract exposes no delete or deactivate for a registered golf club.

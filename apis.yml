@@ -1,23 +1,171 @@
-aid: agl9b00
-name: Agl9b00
-description: 'Agl9b00 is a company surfaced via the API Evangelist harvest backlog (source: secondary-market)
-  and added to the network as a stub for full-pipeline profiling.'
-url: https://raw.githubusercontent.com/api-evangelist/agl9b00/refs/heads/main/apis.yml
-x-type: company
-x-source: harvest:secondary-market
-x-tier: stub
-x-tier-reason: harvest
+aid: agl
+name: AGL
+description: 'AGL Inc. (에이지엘) is a Seoul-headquartered golf technology company, founded in 2019, that
+  operates TIGER GDS — a global distribution system for golf. Its SaaS platform connects golf club tee-time
+  inventory to travel and booking channels in real time, covering more than 1,000 contracted golf courses
+  across 30+ countries, and is the system behind the HeyTeeTime/TIGERBOOKING consumer apps and the Reserve
+  with Google golf integration. AGL publishes three machine-readable REST contracts on tigergds.com: the
+  AGL OTA API (distribution — code lookups, golf club catalog, tee-time availability, static packages
+  and the full reservation lifecycle), the AGL OPEN API (a bi-directional supplier bridge for golf-club
+  and tee-time registration plus reservation callbacks) and a Trip.com outbound reservation integration.
+  Offices in Seoul, Tokyo, Brea (CA) and Singapore.'
+image: https://www.aglgw.com/image/ko/img_main.png
+url: https://raw.githubusercontent.com/api-evangelist/agl/refs/heads/main/apis.yml
+x-source:
+  kind: harvest
+  feed: secondary-market
+  venue: equityzen
+  url: https://equityzen.com/company/agl
+  note: Harvested as an unnamed EquityZen pre-IPO listing slug. Identity resolved 2026-09-12 to AGL Inc.
+    (aglgw.com), the Seoul golf-technology company behind TIGER GDS; the EquityZen slug matches Crunchbase
+    organization agl-9b00.
 specificationVersion: '0.20'
 created: '2026-09-12'
 modified: '2026-09-12'
 tags:
 - Company
-apis: []
+- Golf
+- Travel
+- Booking
+- Reservations
+- Distribution
+- Tee Times
+- GDS
+- Hospitality
+- Sports
+- Leisure
+- South Korea
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
 - FN: APIs.json
   email: info@apis.io
+apis:
+- aid: agl-ota
+  name: AGL OTA API
+  description: 'Distribution-side REST API of TIGER GDS. Version 2.0, OpenAPI 3.1.1, 24 operations across
+    five capability groups: reference code lookups (languages, currencies, continents, countries, regions,
+    cities, airports, facilities, package item codes), golf club catalog and detail, tee-time open dates
+    and open tee times, static golf packages and plan inventory, and the reservation lifecycle (request,
+    confirm, inquiry, partial cancel, cancel, voucher send). Authenticated with an Authorization header
+    token plus a clientId header issued by AGL.'
+  humanURL: https://api-doc.tigergds.com/reference
+  baseURL: https://gw-ota.tigergds.com
+  tags:
+  - Tee Times
+  - Reservations
+  - Golf
+  - Distribution
+  - Travel
+  properties:
+  - type: OpenAPI
+    url: openapi/agl-ota-openapi-original.yml
+  - type: Documentation
+    url: https://api-doc.tigergds.com/reference
+  - type: APIReference
+    url: https://api-doc.tigergds.com/reference
+  image: https://www.aglgw.com/image/ko/img_main.png
+- aid: agl-open
+  name: AGL OPEN API
+  description: 'Supplier-integration bridge API between AGL and golf-club suppliers. Version 0.0.1, OpenAPI
+    3.1.1, 7 operations in two directions: Supplier to AGL (register a golf club, retrieve golf club information,
+    change tee-time availability, daily tee-time registration, retrieve tee time list) and AGL to Supplier
+    (reservation request, cancel reservation). Authenticated with a bearer Authorization header carrying
+    an SHA-256 signature plus an X-Supplier-Code or X-Client-Code identification header.'
+  humanURL: https://api-docs-agl-bridgeapi.tigergds.com/reference
+  baseURL: https://agl-bridgeapi.tigergds.com
+  tags:
+  - Tee Times
+  - Suppliers
+  - Golf
+  - Integration
+  properties:
+  - type: OpenAPI
+    url: openapi/agl-open-openapi-original.yml
+  - type: Documentation
+    url: https://api-docs-agl-bridgeapi.tigergds.com/reference
+  - type: APIReference
+    url: https://api-docs-agl-bridgeapi.tigergds.com/reference
+  image: https://www.aglgw.com/image/ko/img_main.png
+- aid: agl-tripcom-outbound
+  name: AGL Trip.com Reservation Integration API
+  description: AGL-operated outbound reservation bridge that accepts Trip.com-format reservation messages.
+    OpenAPI 3.0.1, a single POST /api/v1 operation carrying a signed request header (accountId, serviceName
+    enum, requestTime, version, sign) and a free-form body, secured with a JWT bearer token plus ClientId,
+    Currency and Language headers.
+  humanURL: https://outboundapi-trip-reserv.tigergds.com/swagger/index.html
+  baseURL: https://outboundapi-trip-reserv.tigergds.com
+  tags:
+  - Reservations
+  - Travel
+  - Integration
+  properties:
+  - type: OpenAPI
+    url: openapi/agl-tripcom-outbound-openapi-original.yml
+  - type: Documentation
+    url: https://outboundapi-trip-reserv.tigergds.com/swagger/index.html
+  image: https://www.aglgw.com/image/ko/img_main.png
 common:
+- type: AgenticAccess
+  url: agentic-access/agl-agentic-access.yml
+- type: DomainSecurity
+  url: security/agl-domain-security.yml
+- type: Authentication
+  url: authentication/agl-authentication.yml
 - type: Website
-  url: https://equityzen.com/company/agl9b00
+  url: https://www.aglgw.com/en/
+- type: About
+  url: https://www.aglgw.com/en/aboutagl
+- type: Documentation
+  url: https://api-doc.tigergds.com/reference
+- type: APIReference
+  url: https://api-doc.tigergds.com/reference
+- type: Support
+  url: https://www.aglgw.com/en/partners
+- type: Blog
+  url: https://www.aglgw.com/en/contents/news
+- type: GitHubOrganization
+  url: https://github.com/aglgw
+- type: SignUp
+  url: https://www.tigergds.com/signup/step1
+- type: Login
+  url: https://www.tigergds.com/login
+- type: LinkedIn
+  url: https://www.linkedin.com/company/aglgw
+- type: Packages
+  url: packages/agl-packages.yml
+- type: X-WellKnownProbe
+  url: well-known/agl-well-known.yml
+- type: X-MCPServerCandidate
+  url: mcp/agl-mcp.yml
+- type: LLMsTxt
+  url: llms/agl-llms.txt
+- type: Overlay
+  url: overlays/agl-ota-overlay.yaml
+- type: Overlay
+  url: overlays/agl-open-overlay.yaml
+- type: Overlay
+  url: overlays/agl-tripcom-outbound-overlay.yaml
+- type: Conformance
+  url: conformance/agl-conformance.yml
+- type: ErrorCatalog
+  url: errors/agl-problem-types.yml
+- type: Lifecycle
+  url: lifecycle/agl-lifecycle.yml
+- type: Conventions
+  url: conventions/agl-conventions.yml
+- type: DataModel
+  url: data-model/agl-data-model.yml
+- type: Webhooks
+  url: asyncapi/agl-webhooks.yml
+- type: AgentSkill
+  url: skills/_index.yml
+- type: Plans
+  url: plans/agl-plans-pricing.yml
+- type: RateLimits
+  url: rate-limits/agl-rate-limits.yml
+x-enrichment:
+  date: '2026-09-12'
+  status: enriched
+  artifacts_added: 26
+  pass: local-v3

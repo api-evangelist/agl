@@ -1,0 +1,204 @@
+generated: '2026-09-12'
+method: searched
+source: >-
+  https://api-doc.tigergds.com/reference (AGL OTA API 2.0),
+  https://api-docs-agl-bridgeapi.tigergds.com/reference (AGL OPEN API 0.0.1),
+  https://outboundapi-trip-reserv.tigergds.com/swagger/index.html, and the OpenAPI documents
+  harvested from them under openapi/
+summary: >-
+  Two independent conventions live side by side. The OTA (distribution) API wraps every payload in
+  a CommonResponse envelope keyed on a string status of "ok" or "fail"; the OPEN (supplier bridge)
+  API wraps every payload in an isSuccess / rstCd / rstMsg / statusCode envelope. They do not share
+  an error vocabulary, a pagination model or a correlation header. Neither offers idempotency keys.
+
+authentication:
+  style: static-credential-headers
+  ota:
+    scheme: Authorization header token (declared as apiKey in header, name Authorization) plus a
+      second apiKey header named clientId issued by AGL
+    applied: globally via the root security block
+  open:
+    scheme: HTTP bearer whose bearerFormat is SHA-256 - the docs state the value is a
+      "Bearer <SHA-256 hashed signature>", so the credential is a computed request signature
+      rather than a static token
+    identification: X-Supplier-Code (Supplier to AGL calls, issued by AGL) or X-Client-Code
+      (AGL to Supplier calls, issued by the supplier)
+  tripcom_outbound:
+    scheme: HTTP bearer JWT plus apiKey headers ClientId, Currency and Language; the request body
+      additionally carries a signed header object (accountId, serviceName, requestTime, version,
+      sign)
+  see: authentication/agl-authentication.yml
+
+idempotency:
+  supported: false
+  coverage: none
+  mechanism: null
+  header: null
+  retention: null
+  scope: []
+  evidence: >-
+    No Idempotency-Key, request-key, dedupe-token or equivalent appears anywhere in any of the
+    three OpenAPI documents (case-insensitive search for "idempot" returns 0 hits across all
+    three). The nearest thing is a natural-key convention stated in prose on
+    POST /v2/reservation/request - "Only one reservation request can be made at a time. If there is
+    an existing integrated reservation number, include it in the reservationNumber field when
+    making the request." That constrains grouping, not replay: a repeated request without a
+    reservationNumber creates a new reservation request. There are ten mutating operations across
+    the OTA and OPEN APIs and none of them has replay protection.
+
+pagination:
+  supported: false
+  style: none
+  evidence: >-
+    No page, limit, offset, cursor, pageSize or nextToken parameter exists on any operation.
+    Collection reads are scoped by filter instead - GET /v2/golfClubs takes codeType plus a
+    comma-joined codeValues list, GET /v2/teeTime/openTeeTimes takes golfClubId plus openDate, and
+    GET /api/golfclub/list and GET /api/teetime/list take a required startDate/endDate window. A
+    consumer cannot page a large result set; it must narrow the filter.
+
+localization:
+  language_param:
+    required: true
+    in: query
+    name: language
+    values: [ko, en, ja, es, zh, tw]
+    note: Required on every OTA read operation via the shared LanguageParam component.
+  currency_param:
+    required: true
+    in: query
+    name: currency
+    example: KRW
+    note: Required on every OTA read operation via the shared CurrencyParam component.
+  multilanguage_text:
+    schema: MultiLanguageText
+    fields: [en, ko, ja, zh, tw, es]
+    note: Free-text content (club names, policy text, notes) is returned as a per-locale object.
+
+request_tracing:
+  supported: partial
+  evidence: >-
+    The OTA spec declares a shared TransactionIdParam (required query parameter transactionId) in
+    components.parameters but no operation references it, so it is currently dead weight in the
+    contract. The Trip.com outbound bridge carries requestTime plus a sign value in its body
+    header, which is a signature rather than a trace id. There is no X-Request-Id / traceparent
+    response header on any surface.
+
+versioning:
+  ota: {scheme: uri-path, current: v2, evidence: every path is prefixed /v2/}
+  open: {scheme: none-in-path, current: 0.0.1, evidence: paths are /api/... with the version
+      carried only in info.version}
+  tripcom_outbound: {scheme: uri-path, current: v1, evidence: the single path is /api/v1}
+  see: lifecycle/agl-lifecycle.yml
+
+error_envelope:
+  ota:
+    shape: {status: "string enum ok|fail", data: "object|null"}
+    error_shape: {status: "string enum FL00|FL01|ET00", statusDescription: string}
+    note: >-
+      Errors are signalled inside a 200-shaped envelope. The OTA spec declares NO 4xx or 5xx
+      response on any of its 24 operations, so an HTTP status code is not a usable success signal;
+      a client must read the status field.
+  open:
+    shape: {isSuccess: boolean, rstCd: string, rstMsg: string, statusCode: integer}
+    note: >-
+      Declares 200 and 400 with SuccessResponse / FailResponse, and repeats the HTTP status inside
+      the body as statusCode. rstCd carries the symbolic code (SUCCESS, INVALID_INPUT).
+  see: errors/agl-problem-types.yml
+
+rate_limit_signalling:
+  supported: false
+  see: rate-limits/agl-rate-limits.yml
+
+dry_run_mode:
+  supported: false
+  note: >-
+    No test/preview/validate-only mode is exposed on any mutating operation. The OTA reservation
+    lifecycle does give an agent a natural rehearsal step - POST /v2/reservation/request blocks a
+    tee time and returns the cancellation policy BEFORE POST /v2/reservation/confirm takes payment -
+    but that is a two-phase commit, not a dry run, and the block is a real inventory hold.
+
+update_semantics:
+  tee_time_update: not-supported
+  note: >-
+    The AGL OPEN API states the constraint in its own info.description: "There is no API for
+    directly updating an existing tee time (e.g., price, time, or policy)." The official workflow
+    is to PUT /api/teetime/availability to set the existing tee time unavailable and then
+    POST /api/teetime/daily to register the corrected tee time as a new entry. An agent that
+    expects a PATCH will not find one.
+
+reversibility:
+  grade: verified
+  summary: >-
+    Every write surface AGL exposes has a documented reversal operation, and the OTA API returns
+    the reversal window as machine-readable data on the reservation itself rather than stating one
+    fixed policy - which is correct for a distribution business where each golf club sets its own
+    terms.
+  write_surfaces:
+  - surface: OTA reservation request
+    operation: POST /v2/reservation/request
+    api: openapi/agl-ota-openapi-original.yml
+    reversal: DELETE /v2/reservation/request
+    reversal_note: >-
+      "Cancel a single reservation request. Cancels one reservation request identified by
+      reservationId. It affects only the targeted request, even if it belongs to a group that
+      shares the same integrated reservation number."
+    also: DELETE /v2/reservation/requests - "Cancel reservation requests by integrated reservation
+      number", reversing the whole group at once.
+    window: >-
+      Before confirmation the request is an unpaid hold, so cancelling it carries no stated fee.
+      The applicable fee schedule is returned with the request itself - the response data carries a
+      CancellationPolicy object.
+    window_source: openapi/agl-ota-openapi-original.yml#/components/schemas/CancellationPolicy
+  - surface: OTA reservation confirmation (payment)
+    operation: POST /v2/reservation/confirm
+    api: openapi/agl-ota-openapi-original.yml
+    reversal: DELETE /v2/reservation
+    reversal_note: Cancels the confirmed reservation, returning the Reservation object.
+    partial_reversal: POST /v2/reservation/partialcancel - cancels a confirmed reservation
+      partially, scoped by a required reservationId query parameter.
+    window: >-
+      Stated per reservation, not globally. CancellationPolicy.policies[] is an array of tiers,
+      each carrying appliesUntil - "ISO format UTC date time that this cancellation policy
+      applies" - plus amountType (cancellationFee or cancellationFeePerc) and amount. The
+      published example is a two-tier ladder - 50 percent until 2025-02-22 11:00, then 100 percent.
+      An agent can therefore read the exact deadline and the exact penalty before it acts.
+    window_source: openapi/agl-ota-openapi-original.yml#/components/schemas/CancellationPolicy
+  - surface: Supplier tee-time registration
+    operation: POST /api/teetime/daily
+    api: openapi/agl-open-openapi-original.yml
+    reversal: PUT /api/teetime/availability
+    reversal_note: >-
+      Sets tee times unavailable by playDate, courseCode and time - applies globally if the filters
+      are omitted. This is the only way to retract a registered tee time; there is no delete.
+    window: No time limit is stated; availability can be changed at any time.
+    window_source: https://api-docs-agl-bridgeapi.tigergds.com/reference
+  - surface: Supplier-side reservation
+    operation: POST /reservation
+    api: openapi/agl-open-openapi-original.yml
+    reversal: POST /reservation/cancel
+    reversal_note: AGL sends a cancellation request to the supplier endpoint carrying reservationId.
+    window: >-
+      Governed by the RefundPolicy the supplier registered with the tee time - refundDate,
+      refundFee and refundUnit per TeeTimeDailyInfo.refundPolicy.
+    window_source: openapi/agl-open-openapi-original.yml#/components/schemas/RefundPolicy
+  - surface: Golf club registration
+    operation: POST /api/golfclub
+    api: openapi/agl-open-openapi-original.yml
+    reversal: null
+    reversal_note: >-
+      No delete or deactivate operation for a registered golf club exists in the contract. This is
+      the one write surface with no reversal path.
+    window: null
+  - surface: Voucher send
+    operation: POST /v2/reservation/sendVoucher
+    api: openapi/agl-ota-openapi-original.yml
+    reversal: null
+    reversal_note: Sending a voucher is a communication side effect and is not retractable.
+    window: null
+
+cross_links:
+  errors: errors/agl-problem-types.yml
+  lifecycle: lifecycle/agl-lifecycle.yml
+  authentication: authentication/agl-authentication.yml
+  rate_limits: rate-limits/agl-rate-limits.yml
+  data_model: data-model/agl-data-model.yml

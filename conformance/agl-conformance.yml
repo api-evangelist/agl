@@ -1,0 +1,118 @@
+generated: '2026-09-12'
+method: derived
+source: >-
+  openapi/agl-ota-openapi-original.yml, openapi/agl-open-openapi-original.yml,
+  openapi/agl-tripcom-outbound-openapi-original.yml, https://api-doc.tigergds.com/reference,
+  https://api-docs-agl-bridgeapi.tigergds.com/reference, https://www.aglgw.com/en/
+standards:
+- id: openapi-3.1
+  conforms: true
+  evidence: >-
+    AGL OTA API and AGL OPEN API are both declared openapi 3.1.1 and parse as OpenAPI documents
+    with populated paths and components blocks.
+- id: openapi-3.0
+  conforms: true
+  evidence: >-
+    The Trip.com outbound reservation bridge is declared openapi 3.0.1 and is served as a
+    Swagger UI descriptor at
+    https://outboundapi-trip-reserv.tigergds.com/swagger/v1/swagger.json.
+- id: rest-json
+  conforms: true
+  evidence: All operations exchange application/json over HTTPS.
+- id: bearer-token-auth
+  conforms: true
+  evidence: >-
+    AGL OPEN API declares an http/bearer securityScheme; the Trip.com bridge declares
+    http/bearer with bearerFormat JWT.
+- id: api-key-header-auth
+  conforms: true
+  evidence: >-
+    AGL OTA API declares two apiKey-in-header schemes (Authorization, clientId); the Trip.com
+    bridge declares three (ClientId, Currency, Language).
+- id: oauth2
+  conforms: false
+  evidence: >-
+    No oauth2 securityScheme in any specification, and no /.well-known/oauth-authorization-server
+    or /.well-known/openid-configuration on any of the eleven hosts probed 2026-09-12.
+- id: oidc
+  conforms: false
+  evidence: No openIdConnect securityScheme and no OIDC discovery document on any host.
+- id: mutual-tls
+  conforms: false
+  evidence: No mutualTLS securityScheme declared.
+- id: rfc9457-problem-details
+  conforms: false
+  evidence: >-
+    No application/problem+json media type anywhere. Both APIs use bespoke result envelopes -
+    status/statusDescription on the OTA side, isSuccess/rstCd/rstMsg/statusCode on the OPEN side.
+    See errors/agl-problem-types.yml.
+- id: rfc8594-sunset-header
+  conforms: false
+  evidence: No Sunset or Deprecation response header declared; no deprecation policy published.
+- id: rfc9116-security-txt
+  conforms: false
+  evidence: >-
+    www.aglgw.com, www.tigergds.com and all four API hosts return 404 (or a login catch-all) for
+    /.well-known/security.txt. The two documentation subdomains return Scalar's own security.txt,
+    which is the documentation vendor's and is not credited to AGL.
+    See well-known/agl-well-known.yml.
+- id: http-request-signing
+  conforms: partial
+  evidence: >-
+    The AGL OPEN API states its Authorization header carries a "Bearer <SHA-256 hashed signature>",
+    and the Trip.com bridge carries a sign field alongside requestTime in its request header
+    object - so both surfaces sign requests, but neither uses a published signing standard
+    (RFC 9421 HTTP Message Signatures, AWS SigV4 or similar) and neither publishes its canonical
+    string-to-sign.
+- id: idempotency-keys
+  conforms: false
+  evidence: No idempotency key on any of the ten mutating operations.
+    See conventions/agl-conventions.yml.
+- id: pagination
+  conforms: false
+  evidence: No page/limit/offset/cursor parameter on any collection read.
+- id: bcp47-language-tags
+  conforms: partial
+  evidence: >-
+    The required OTA language parameter and the MultiLanguageText schema use ko, en, ja, es, zh and
+    tw. "tw" is not a BCP 47 language subtag - the correct tag for traditional Chinese as used in
+    Taiwan is zh-TW - so the vocabulary is BCP-47-shaped but not BCP 47 conformant.
+- id: iso4217-currency
+  conforms: true
+  evidence: >-
+    The OTA currency parameter is exemplified as KRW and GolfClub.currency, Amount.currency and
+    CancellationPolicy.currency all carry ISO 4217 alphabetic codes.
+- id: iso8601-datetime
+  conforms: partial
+  evidence: >-
+    Dates are ISO 8601 (openDate format "ISO-formatted date", startDate/endDate yyyy-MM-dd), but
+    CancellationPolicy.appliesUntil is documented as "ISO format UTC date time" while its example
+    is "2025-02-22 11:00" - a space separator and no zone designator, which is not ISO 8601.
+- id: iata-airport-codes
+  conforms: true
+  evidence: >-
+    GET /v2/codes/airports returns an Airport code list and RecommendedFlight carries
+    inboundDepartureAirportCode / inboundArrivalAirportCode / outboundDepartureAirportCode /
+    outboundArrivalAirportCode fields, consistent with IATA location codes.
+domain_standards:
+- id: opentravel-ota
+  conforms: false
+  evidence: >-
+    Checked for the domain standard of the travel-distribution market AGL competes in. Neither
+    specification carries an OpenTravel (OTA_*) message name, an OTA namespace, an OpenTravel
+    schema reference or any OTA XML/JSON message shape. "OTA" in AGL's own naming means
+    "online travel agency" (the distribution side of its business), not OpenTravel Alliance.
+    The contract is bespoke REST.
+  note: >-
+    Reward-only dimension. Golf tee-time distribution has no equivalent of ISO 20022 or FHIR in
+    wide machine-readable use, so nothing is asserted here to fill the slot. If AGL were to adopt
+    OpenTravel or publish its signing canonicalization, a partner who already speaks it would
+    integrate with no bespoke connector.
+compliance_program:
+  published: false
+  certifications: []
+  evidence: >-
+    No trust centre, compliance page or named certification (SOC 2, ISO 27001, PCI DSS, GDPR,
+    K-ISMS) is published on aglgw.com or tigergds.com; probe-security-programs.py returned
+    vdp=none trust=none on 2026-09-12. No Compliance or TrustCenter pointer is wired, because
+    there is no published program to point at.

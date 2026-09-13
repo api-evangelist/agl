@@ -1,0 +1,101 @@
+openapi: 3.0.1
+info:
+  title: Trip.com reservation integreated Api v1.0
+  version: '1.0'
+paths:
+  /api/v1:
+    post:
+      tags:
+      - Reservation
+      requestBody:
+        content:
+          application/json-patch+json:
+            schema:
+              $ref: '#/components/schemas/JObjectTripComRequestDto'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JObjectTripComRequestDto'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/JObjectTripComRequestDto'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/JObjectTripComRequestDto'
+      responses:
+        '200':
+          description: OK
+components:
+  schemas:
+    JObjectTripComRequestDto:
+      type: object
+      properties:
+        header:
+          $ref: '#/components/schemas/TripComRequestHeader'
+        body:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/JToken'
+          nullable: true
+      additionalProperties: false
+    JToken:
+      type: array
+      items:
+        $ref: '#/components/schemas/JToken'
+    ServiceNameEnum:
+      enum:
+      - 0
+      - 1
+      - 2
+      - 3
+      - 4
+      - 5
+      - 6
+      - 7
+      type: integer
+      format: int32
+    TripComRequestHeader:
+      required:
+      - accountId
+      - requestTime
+      - serviceName
+      - sign
+      - version
+      type: object
+      properties:
+        accountId:
+          minLength: 1
+          type: string
+        serviceName:
+          $ref: '#/components/schemas/ServiceNameEnum'
+        requestTime:
+          minLength: 1
+          type: string
+        version:
+          minLength: 1
+          type: string
+        sign:
+          minLength: 1
+          type: string
+      additionalProperties: false
+  securitySchemes:
+    Bearer:
+      type: http
+      scheme: Bearer
+      bearerFormat: JWT
+    ClientId:
+      type: apiKey
+      name: ClientId
+      in: header
+    Currency:
+      type: apiKey
+      name: Currency
+      in: header
+    Language:
+      type: apiKey
+      name: Language
+      in: header
+security:
+- Bearer: []
+  ClientId: []
+  Currency: []
+  Language: []

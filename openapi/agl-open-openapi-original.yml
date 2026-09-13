@@ -1,0 +1,740 @@
+components:
+  parameters:
+    X-Client-Code:
+      description: Client code issued by supplier (required for AGLToSupplier APIs)
+      in: header
+      name: X-Client-Code
+      required: true
+      schema:
+        type: string
+    X-Supplier-Code:
+      description: Supplier code issued by AGL (required for SupplierToAGL APIs)
+      in: header
+      name: X-Supplier-Code
+      required: true
+      schema:
+        type: string
+  schemas:
+    CancelResponse:
+      properties:
+        data:
+          properties:
+            cancelDate:
+              type: string
+            cancelPenaltyAmount:
+              type: integer
+            currency:
+              type: string
+          type: object
+        isSuccess:
+          type: boolean
+        rstCd:
+          type: string
+        rstMsg:
+          type: string
+        statusCode:
+          type: integer
+      required:
+      - isSuccess
+      - rstCd
+      - rstMsg
+      - statusCode
+      type: object
+    CommonResponse:
+      properties:
+        isSuccess:
+          type: boolean
+        rstCd:
+          description: 'Response Code:
+
+            - SUCCESS: Request was successful
+
+            - INVALID_INPUT: Invalid input parameters
+
+            - UNAUTHORIZED: Authentication failed
+
+            - FORBIDDEN: Access is forbidden
+
+            - NOT_FOUND: Resource not found
+
+            - SERVER_ERROR: Internal server error'
+          enum:
+          - SUCCESS
+          - INVALID_INPUT
+          - UNAUTHORIZED
+          - FORBIDDEN
+          - NOT_FOUND
+          - SERVER_ERROR
+          type: string
+        rstMsg:
+          type: string
+        statusCode:
+          type: integer
+      required:
+      - isSuccess
+      - rstCd
+      - rstMsg
+      - statusCode
+      type: object
+    SuccessResponse:
+      properties:
+        isSuccess:
+          type: boolean
+          examples:
+          - true
+        rstCd:
+          type: string
+          examples:
+          - SUCCESS
+        rstMsg:
+          type: string
+          examples:
+          - Request was successful
+        statusCode:
+          type: integer
+          examples:
+          - 200
+      required:
+      - isSuccess
+      - rstCd
+      - rstMsg
+      - statusCode
+      type: object
+    FailResponse:
+      properties:
+        isSuccess:
+          type: boolean
+          examples:
+          - false
+        rstCd:
+          type: string
+          examples:
+          - INVALID_INPUT
+        rstMsg:
+          type: string
+          examples:
+          - Invalid input parameters
+        statusCode:
+          type: integer
+          examples:
+          - 400
+      required:
+      - isSuccess
+      - rstCd
+      - rstMsg
+      - statusCode
+      type: object
+    Course:
+      properties:
+        courseCode:
+          type: string
+        courseHoleCount:
+          type: integer
+        courseName:
+          type: string
+        startHole:
+          type: integer
+      required:
+      - courseCode
+      - courseName
+      type: object
+    GolfClub:
+      properties:
+        address:
+          type: string
+        countryCode:
+          type: string
+        courses:
+          items:
+            $ref: '#/components/schemas/Course'
+          type: array
+        currency:
+          type: string
+        description:
+          type: string
+        email:
+          type: string
+        fax:
+          type: string
+        golfClubCode:
+          type: string
+        golfClubName:
+          type: string
+        holeInfo:
+          items:
+            $ref: '#/components/schemas/HoleInfo'
+          type: array
+        homepage:
+          type: string
+        images:
+          items:
+            properties:
+              description:
+                type: string
+              id:
+                type: integer
+              title:
+                type: string
+              url:
+                type: string
+            type: object
+          type: array
+        isGuestInfoRequired:
+          type: boolean
+        language:
+          type: string
+        latitude:
+          type: number
+        longitude:
+          type: number
+        phone:
+          type: string
+        refundPolicy:
+          items:
+            $ref: '#/components/schemas/RefundPolicy'
+          type: array
+        totalCourseCount:
+          type: integer
+        totalHoleCount:
+          type: integer
+      required:
+      - golfClubCode
+      - golfClubName
+      - countryCode
+      - language
+      - currency
+      - latitude
+      - longitude
+      - isGuestInfoRequired
+      - courses
+      type: object
+    HoleInfo:
+      properties:
+        distance:
+          type: integer
+        distanceUnit:
+          type: integer
+        holeName:
+          type: string
+        holeNumber:
+          type: integer
+        par:
+          type: integer
+      required:
+      - holeNumber
+      type: object
+    Price:
+      properties:
+        additionalTax:
+          type: number
+        caddieFee:
+          type: number
+        cartFee:
+          type: number
+        greenFee:
+          type: number
+        playerCount:
+          type: integer
+        tax:
+          type: number
+        unitPrice:
+          type: number
+      required:
+      - playerCount
+      - greenFee
+      - unitPrice
+      type: object
+    RefundPolicy:
+      properties:
+        refundDate:
+          type: integer
+        refundFee:
+          type: integer
+        refundUnit:
+          type: integer
+      required:
+      - refundDate
+      - refundFee
+      - refundUnit
+      type: object
+    ReservationCancel:
+      properties:
+        reservationId:
+          type: string
+      required:
+      - reservationId
+      type: object
+    ReservationRequest:
+      properties:
+        courseCode:
+          type: string
+        currency:
+          type: string
+        golfClubCode:
+          type: string
+        guestInfo:
+          items:
+            properties:
+              guestCountry:
+                type: string
+              guestGender:
+                type: string
+              guestName:
+                type: string
+              guestPhone:
+                type: string
+            type: object
+          type: array
+        holderName:
+          type: string
+        reservationCountry:
+          type: string
+        reservationDate:
+          type: string
+        reservationEmail:
+          type: string
+        reservationMembers:
+          type: integer
+        reservationPhone:
+          type: string
+        reservationStartTime:
+          type: string
+        totalPrice:
+          type: number
+      required:
+      - golfClubCode
+      - courseCode
+      - reservationDate
+      - reservationStartTime
+      - reservationMembers
+      - currency
+      - totalPrice
+      - holderName
+      - reservationPhone
+      - reservationEmail
+      - reservationCountry
+      type: object
+    ReservationResponse:
+      properties:
+        isSuccess:
+          type: boolean
+        reservationId:
+          type: string
+        rstCd:
+          type: string
+        rstMsg:
+          type: string
+        statusCode:
+          type: integer
+      required:
+      - isSuccess
+      - rstCd
+      - rstMsg
+      - statusCode
+      - reservationId
+      type: object
+    TeeTimeDailyInfo:
+      properties:
+        courseCode:
+          type: string
+        includeCaddie:
+          type: boolean
+        includeCart:
+          type: boolean
+        maxPlayers:
+          type: integer
+        minPlayers:
+          type: integer
+        playDate:
+          type: string
+        price:
+          items:
+            $ref: '#/components/schemas/Price'
+          type: array
+        refundPolicy:
+          items:
+            $ref: '#/components/schemas/RefundPolicy'
+          type: array
+        reservationType:
+          type: integer
+        timeDaily:
+          items:
+            $ref: '#/components/schemas/Time'
+          type: array
+      required:
+      - playDate
+      - courseCode
+      - minPlayers
+      - maxPlayers
+      - includeCart
+      - includeCaddie
+      - reservationType
+      - timeDaily
+      - price
+      type: object
+    Time:
+      properties:
+        startTime:
+          type: string
+        teeTimeCode:
+          type: string
+      required:
+      - startTime
+      type: object
+    GolfClubListData:
+      type: array
+      items:
+        $ref: '#/components/schemas/GolfClub'
+    TeeTimeListData:
+      type: array
+      items:
+        $ref: '#/components/schemas/TeeTimeDailyInfo'
+    Availability:
+      properties:
+        available:
+          type: boolean
+        courseCode:
+          items:
+            type: string
+        golfClubCode:
+          type: string
+        playDate:
+          type: string
+        time:
+          items:
+            $ref: '#/components/schemas/Time'
+          type: array
+      required:
+      - golfClubCode
+      - available
+      type: object
+  securitySchemes:
+    bearerAuth:
+      bearerFormat: SHA-256
+      scheme: bearer
+      type: http
+info:
+  description: 'This OpenAPI document defines the full set of interfaces used for integration between AGL and its suppliers.
+
+
+    ### Supplier → AGL
+
+    APIs for registering golf clubs, tee times, and availability.
+
+    **Authentication Headers:**
+
+    - `Authorization`: Bearer <SHA-256 hashed signature>
+
+    - `X-Supplier-Code`: Supplier code issued by AGL
+
+
+    ### AGL → Supplier
+
+    APIs for sending reservation and cancellation requests.
+
+    **Authentication Headers:**
+
+    - `Authorization`: Bearer <SHA-256 hashed signature>
+
+    - `X-Client-Code`: Client code issued by Supplier
+
+
+    All APIs are secured using SHA-256-based Authorization and require proper identification headers.
+
+    ### Important Note (Tee Time Update)
+
+    - There is **no API for directly updating an existing tee time** (e.g., price, time, or policy).
+
+    - If you need to change tee time information, you must:
+
+    1. Change the status (availability) of the existing tee time to unavailable using `/api/teetime/availability`.
+
+    2. Register the updated tee time as a new entry using `/api/teetime/daily`.
+
+    - **You cannot update tee time details directly—only availability can be modified.**
+
+    - This is the official workflow for updating tee time data.'
+  title: AGL OPEN API
+  version: 0.0.1
+openapi: 3.1.1
+paths:
+  /api/golfclub:
+    post:
+      description: Registers a new golf club with full profile details including images, courses, refund policies, and hole
+        information.
+      parameters:
+      - $ref: '#/components/parameters/X-Supplier-Code'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GolfClub'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+          description: Success
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FailResponse'
+          description: Invalid input
+      summary: Register a golf club
+      tags:
+      - SupplierToAGL
+  /api/golfclub/list:
+    get:
+      description: Retrieves one or more golf clubs registered under the supplier. Supports optional filtering by golfClubCode.
+      parameters:
+      - in: query
+        name: golfClubCode
+        required: true
+        schema:
+          type: string
+      - in: query
+        name: startDate
+        description: 'Filter from this registration date (format: yyyy-MM-dd)'
+        required: true
+        schema:
+          type: string
+          examples:
+          - '2025-01-01'
+      - in: query
+        name: endDate
+        description: 'Filter until this registration date (format: yyyy-MM-dd)'
+        required: true
+        schema:
+          type: string
+          examples:
+          - '2025-12-31'
+      - $ref: '#/components/parameters/X-Supplier-Code'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  isSuccess:
+                    type: boolean
+                    examples:
+                    - true
+                  rstCd:
+                    type: string
+                    examples:
+                    - SUCCESS
+                  rstMsg:
+                    type: string
+                    examples:
+                    - success
+                  statusCode:
+                    type: integer
+                    examples:
+                    - 200
+                  data:
+                    $ref: '#/components/schemas/GolfClubListData'
+          description: Success
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FailResponse'
+          description: Invalid input
+      summary: Retrieve golf club information
+      tags:
+      - SupplierToAGL
+  /api/teetime/availability:
+    put:
+      description: Changes availability status of tee times by specifying playDate, courseCode, and time. Applies globally
+        if filters are omitted.
+      parameters:
+      - $ref: '#/components/parameters/X-Supplier-Code'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                availability:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Availability'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+          description: Success
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FailResponse'
+          description: Invalid input
+      summary: Change tee time availability status
+      tags:
+      - SupplierToAGL
+  /api/teetime/daily:
+    post:
+      description: Registers daily tee time schedules with associated pricing, plan, and cancellation policy information.
+      parameters:
+      - $ref: '#/components/parameters/X-Supplier-Code'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                golfClubCode:
+                  type: string
+                teeTimeDailyInfo:
+                  items:
+                    $ref: '#/components/schemas/TeeTimeDailyInfo'
+                  type: array
+              required:
+              - golfClubCode
+              - teeTimeDailyInfo
+              type: object
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+          description: Success
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FailResponse'
+          description: Invalid input
+      summary: Daily Tee Time Registration
+      tags:
+      - SupplierToAGL
+  /api/teetime/list:
+    get:
+      description: Retrieves tee time information for a specific date range and golf club.
+      parameters:
+      - in: query
+        name: startDate
+        required: true
+        schema:
+          type: string
+      - in: query
+        name: endDate
+        required: true
+        schema:
+          type: string
+      - in: query
+        name: golfClubCode
+        required: true
+        schema:
+          type: string
+      - $ref: '#/components/parameters/X-Supplier-Code'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  isSuccess:
+                    type: boolean
+                    examples:
+                    - true
+                  rstCd:
+                    type: string
+                    examples:
+                    - SUCCESS
+                  rstMsg:
+                    type: string
+                    examples:
+                    - success
+                  statusCode:
+                    type: integer
+                    examples:
+                    - 200
+                  data:
+                    $ref: '#/components/schemas/TeeTimeListData'
+          description: Success
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FailResponse'
+          description: Invalid input
+      summary: Retrieve tee time list
+      tags:
+      - SupplierToAGL
+  /reservation:
+    post:
+      description: AGL requests a reservation confirmation to the supplier. A successful call confirms the reservation.
+      parameters:
+      - $ref: '#/components/parameters/X-Client-Code'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReservationRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReservationResponse'
+          description: Reservation success
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FailResponse'
+          description: Invalid input
+      summary: Reservation request
+      tags:
+      - AGLToSupplier
+  /reservation/cancel:
+    post:
+      description: AGL cancels a previously made reservation by sending the reservation ID.
+      parameters:
+      - $ref: '#/components/parameters/X-Client-Code'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReservationCancel'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CancelResponse'
+          description: Reservation cancelled
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FailResponse'
+          description: Invalid input
+      summary: Cancel reservation
+      tags:
+      - AGLToSupplier
+security:
+- bearerAuth: []
+servers:
+- description: Sandbox Environment
+  url: https://sandbox-agl-bridgeapi.tigergds.com
+- description: Production Environment
+  url: https://agl-bridgeapi.tigergds.com
+tags:
+- description: APIs where suppliers send data to AGL (e.g., golf club registration, tee times, etc.)
+  name: SupplierToAGL
+- description: APIs where AGL sends reservation and cancellation requests to suppliers
+  name: AGLToSupplier

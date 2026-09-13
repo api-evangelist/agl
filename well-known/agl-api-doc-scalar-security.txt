@@ -1,0 +1,23 @@
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA256
+
+Contact: mailto:marc@scalar.com
+Expires: 2025-11-19T00:00:00.000Z
+Preferred-Languages: en, fr, de
+Encryption: https://cdn.scalar.com/pgp-public.asc
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEJNRtzDDZ1rnFPCOufRx1IS/RuBEFAmc88ywACgkQfRx1IS/R
+uBEpgA//dTIGLwnz7nF9XvFfc+hM9KaHOb8ihi5ZlH6S6rCd/LEx8ptwGF9m4zKa
+myJLODKc2pSuo5wpuypiNg5zJDUC4LJ+AtlEdC6Ol1QQe+ZiCeo/USqWPD6sabUE
+UrdPRzs3MMmxa1QvLI/uOQmY+elzdh2tSUCyIH8PG13aLkt5rmqYua1e1cbFIjgz
+JP+IKpX2yuyInvKNwvEB1xzbcLgD5DDSdQy29rS7TN7qtfhAxh0g00SmuAmWSjA+
+nzPQMP1lpF3WP4Plpftpyn67xE/PbqRPWkoLRR8crq4hj0j9aeudOBIWjAyy8VvD
+4vFP3zMrTa/yehXYOnCCdsXgFBcJCxHfsL+q6ygs/ezE1hAp4PsE+lLoN35LFEQn
+rgdFVAnUBpGKGrEtYTLL1YJ93r5D/5jJXGD7FSyCHEmGlvJ0hdy5baxqdDIeHv1n
+AnW5bqmb8tPeN8SXjJO96/rBzJ708JVz+AeDmJgaX6sMQg4tg6JGqDH8Mjl9/8TQ
+gaApxGNqpepVmDPRKT/TOIrR5Iyz7308x9KECcGhsji6G2GuH4PJeAbAnheDOiFP
+20DSrfG+NtPKLVfrzXznkZuqDES7cZR/4E1MnwS79BgZK/QcGeEgPwM2pJG05m/H
+mb2kCtADLeTGlHoNbPRnQ1fts4btRou5dE61AvB82sGts3XcuZ4=
+=r0KG
+-----END PGP SIGNATURE-----

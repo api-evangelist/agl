@@ -1,0 +1,16 @@
+generated: '2026-09-12'
+method: searched
+source: >-
+  https://api-doc.tigergds.com/reference, https://api-docs-agl-bridgeapi.tigergds.com/reference,
+  openapi/agl-ota-openapi-original.yml, openapi/agl-open-openapi-original.yml
+limit_count: 0
+limits: []
+response_headers: []
+exhaustion_status: null
+notes: >-
+  No published rate limits. Neither AGL reference site documents a quota, throttle, burst allowance
+  or back-off policy, and neither OpenAPI declares a 429 response or any X-RateLimit-* / RateLimit-*
+  / Retry-After response header — the AGL OTA API declares only 200 responses across all 24
+  operations, and the AGL OPEN API declares only 200 and 400. An integrating partner therefore has
+  no runtime rate-limit signal to read and no documented number to design against. Recorded as an
+  honest zero.

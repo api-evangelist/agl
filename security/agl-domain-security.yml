@@ -1,0 +1,31 @@
+generated: '2026-09-12'
+method: probed
+source: live DNS/TLS/HTTP probes of apis.yml + OpenAPI hosts
+hosts:
+- host: www.aglgw.com
+  https: true
+  tls_version: TLSv1.3
+  cert_expires: Dec  9 23:59:59 2026 GMT
+  hsts: false
+- host: api-doc.tigergds.com
+  https: true
+  tls_version: TLSv1.3
+  cert_expires: Dec  2 13:33:21 2026 GMT
+  hsts: false
+- host: gw-ota.tigergds.com
+  https: true
+  tls_version: TLSv1.3
+  cert_expires: Jan  7 23:59:59 2027 GMT
+  hsts: null
+domains:
+- domain: aglgw.com
+  dnssec: false
+  caa: []
+  spf: true
+  dmarc: true
+  dmarc_policy: none
+- domain: tigergds.com
+  dnssec: false
+  caa: []
+  spf: true
+  dmarc: false

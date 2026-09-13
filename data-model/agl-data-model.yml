@@ -1,0 +1,146 @@
+generated: '2026-09-12'
+method: derived
+source: >-
+  openapi/agl-ota-openapi-original.yml (39 schemas),
+  openapi/agl-open-openapi-original.yml (17 schemas),
+  openapi/agl-tripcom-outbound-openapi-original.yml (4 schemas)
+summary: >-
+  Two entity graphs describe the same business from opposite ends. The OTA (distribution) model is
+  a catalogue-and-booking graph rooted on GolfClub and Reservation; the OPEN (supplier) model is a
+  registration graph rooted on GolfClub and TeeTimeDailyInfo. They share the real-world entities -
+  golf club, course, tee time, reservation - but not the field names or the identifier scheme:
+  the distribution side keys on id / golfClubId / reservationId / reservationNumber, the supplier
+  side keys on golfClubCode / courseCode / teeTimeCode / reservationId.
+identifier_scheme:
+  ota: >-
+    Opaque string ids. GolfClub.id, StaticPackage.id, StaticPackagePlan.id, GolfCourse.id,
+    TeeTime.id, Amount.reservationId. Reservation carries BOTH reservationId (one request) and
+    reservationNumber ("integrated reservation number" - the group key that binds several requests
+    made in one booking). Reference-code entities (Continent, Country, Region, City, Airport,
+    GolfClubFacility) all use an id/name pair, and Country/Region/City carry a parent id.
+  open: >-
+    Partner-scoped codes rather than ids - golfClubCode, courseCode, teeTimeCode - plus the
+    AGL-issued X-Supplier-Code and supplier-issued X-Client-Code as the tenancy keys carried in
+    headers rather than in the payload.
+  no_prefixes: >-
+    Neither API publishes typed id prefixes (no cus_/res_ style discriminators), so an id is not
+    self-describing.
+entities:
+- name: GolfClub
+  api: ota
+  schema: GolfClub / GolfClubDetail / GolfClubInformation / GolfClubInformationDetail
+  key: id
+  fields: [id, name, thumbnailImages, acceptedGroupSizes, currency, minPrice, minPriceDate,
+    minPriceDateHour, timezone, category, lastUpdateAt]
+  detail_fields: [checkpoints, cntHoles, par, courseLength, courseLengthUnit, telephone, address,
+    homepageURL, latitude, longitude, googlePlaceId, courses, facilities]
+  operations: [GET /v2/golfClubs, GET /v2/golfClub]
+- name: GolfCourse
+  api: ota
+  schema: GolfCourse / CourseType / CourseTypeDetail
+  key: id
+  fields: [id, name, types]
+  note: CourseTypeDetail is the per-hole card - holeName, par, handicap and the red/yellow/white/
+    blue/black tee distances.
+- name: TeeTime
+  api: ota
+  schema: TeeTime / TeeTimeWithAmount / Course
+  key: id
+  fields: [id, teeDate, teeTimeAt, teeTimeAtObject]
+  operations: [GET /v2/teeTime/openDates, GET /v2/teeTime/openTeeTimes]
+- name: StaticPackage
+  api: ota
+  schema: StaticPackage / StaticPackagePlan / AccommodationInfo / RecommendedFlight
+  key: id
+  fields: [id, name, hotelNights, packageNights, suggestedPlanItineraries, golfClubs, includes,
+    includedItemsText, disclaimerText]
+  operations: [GET /v2/staticPackage/packages, GET /v2/staticPackage/plans]
+  note: Added to the contract on 2 June per the inline note in info.description.
+- name: Reservation
+  api: ota
+  schema: Reservation / ReservationRequest / TeeBooker / TeeGolfers / FlightInfo
+  key: reservationNumber
+  fields: [reservationNumber, reference, payment, charge, reservations]
+  operations: [POST /v2/reservation/request, DELETE /v2/reservation/request,
+    DELETE /v2/reservation/requests, POST /v2/reservation/confirm,
+    POST /v2/reservation/partialcancel, GET /v2/reservation, DELETE /v2/reservation,
+    POST /v2/reservation/sendVoucher]
+- name: Payment
+  api: ota
+  schema: Payment / PaymentRequest / ConfirmRequest / Amount / AmountRequest / TeetimeAmount
+  key: id
+  fields: [id, currency, totalAmount, amountLines, mobile, email, paymentMethod]
+- name: CancellationPolicy
+  api: ota
+  schema: CancellationPolicy
+  fields: [currency, policies]
+  note: policies[] carries amountType (cancellationFee | cancellationFeePerc), amount and
+    appliesUntil - the reversal window an agent must read before cancelling.
+- name: ReferenceCode
+  api: ota
+  schema: Continent / Country / Region / City / Airport / GolfClubFacility
+  operations: [GET /v2/codes/languages, GET /v2/codes/currencies, GET /v2/codes/continents,
+    GET /v2/codes/countries, GET /v2/codes/regions, GET /v2/codes/cities, GET /v2/codes/airports,
+    GET /v2/codes/facilities, GET /v2/codes/packageItemCodes]
+- name: SupplierGolfClub
+  api: open
+  schema: GolfClub / Course / HoleInfo
+  key: golfClubCode
+  fields: [golfClubCode, golfClubName, address, countryCode, courses, currency, description, email,
+    fax, holeInfo, homepage, images, isGuestInfoRequired, language, latitude, longitude]
+  operations: [POST /api/golfclub, GET /api/golfclub/list]
+- name: TeeTimeDailyInfo
+  api: open
+  schema: TeeTimeDailyInfo / Time / Price / RefundPolicy
+  key: teeTimeCode
+  fields: [courseCode, includeCaddie, includeCart, maxPlayers, minPlayers, playDate, price,
+    refundPolicy, reservationType, timeDaily]
+  operations: [POST /api/teetime/daily, GET /api/teetime/list]
+- name: Availability
+  api: open
+  schema: Availability
+  fields: [available, courseCode, golfClubCode, playDate, time]
+  operations: [PUT /api/teetime/availability]
+- name: SupplierReservation
+  api: open
+  schema: ReservationRequest / ReservationResponse / ReservationCancel / CancelResponse
+  key: reservationId
+  fields: [courseCode, currency, golfClubCode, guestInfo, holderName, reservationCountry,
+    reservationDate, reservationEmail, reservationMembers, reservationPhone,
+    reservationStartTime, totalPrice]
+  operations: [POST /reservation, POST /reservation/cancel]
+relationships:
+- {from: GolfClub, to: GolfCourse, kind: has_many, via: courses, api: ota}
+- {from: GolfClub, to: GolfClubFacility, kind: has_many, via: facilities, api: ota}
+- {from: GolfClub, to: GolfClubInformationDetail, kind: has_one, via: GolfClubDetail, api: ota}
+- {from: GolfCourse, to: CourseType, kind: has_many, via: types, api: ota}
+- {from: CourseType, to: CourseTypeDetail, kind: has_many, via: detail, api: ota}
+- {from: Course, to: TeeTime, kind: has_many, via: teeTimes, api: ota}
+- {from: StaticPackage, to: GolfClub, kind: has_many, via: golfClubs, api: ota}
+- {from: StaticPackagePlan, to: StaticPackage, kind: belongs_to, via: packageId, api: ota}
+- {from: StaticPackagePlan, to: CancellationPolicy, kind: has_one, via: cancellationPolicy,
+   api: ota}
+- {from: StaticPackagePlan, to: GolfClub, kind: has_many, via: golfClubs, api: ota}
+- {from: Reservation, to: Payment, kind: has_one, via: payment, api: ota}
+- {from: Reservation, to: Amount, kind: has_many, via: charge, api: ota}
+- {from: Reservation, to: ReservationRequest, kind: has_many, via: reservations, api: ota}
+- {from: Amount, to: Reservation, kind: belongs_to, via: reservationId, api: ota}
+- {from: ReservationRequest, to: TeeTime, kind: has_one, via: teeTime, api: ota}
+- {from: ReservationRequest, to: StaticPackage, kind: has_one, via: staticPackage, api: ota}
+- {from: Country, to: Continent, kind: belongs_to, via: continentId, api: ota}
+- {from: Region, to: Country, kind: belongs_to, via: countryId, api: ota}
+- {from: City, to: Country, kind: belongs_to, via: countryId, api: ota}
+- {from: SupplierGolfClub, to: Course, kind: has_many, via: courses, api: open}
+- {from: SupplierGolfClub, to: HoleInfo, kind: has_many, via: holeInfo, api: open}
+- {from: TeeTimeDailyInfo, to: Course, kind: belongs_to, via: courseCode, api: open}
+- {from: TeeTimeDailyInfo, to: Time, kind: has_many, via: timeDaily, api: open}
+- {from: TeeTimeDailyInfo, to: Price, kind: has_one, via: price, api: open}
+- {from: TeeTimeDailyInfo, to: RefundPolicy, kind: has_many, via: refundPolicy, api: open}
+- {from: Availability, to: SupplierGolfClub, kind: belongs_to, via: golfClubCode, api: open}
+- {from: Availability, to: Course, kind: belongs_to, via: courseCode, api: open}
+- {from: SupplierReservation, to: SupplierGolfClub, kind: belongs_to, via: golfClubCode, api: open}
+- {from: SupplierReservation, to: Course, kind: belongs_to, via: courseCode, api: open}
+cross_api_note: >-
+  Nothing in either contract maps an OTA GolfClub.id to an OPEN golfClubCode. A partner operating
+  on both sides of TIGER GDS must maintain its own crosswalk between the two identifier schemes;
+  the published specifications do not provide one.

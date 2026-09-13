@@ -1,0 +1,40 @@
+generated: '2026-09-12'
+method: probed
+source: >-
+  openapi/agl-open-openapi-original.yml servers[] block, rendered at
+  https://api-docs-agl-bridgeapi.tigergds.com/reference; DNS resolution checked 2026-09-12
+available: false
+declared: true
+summary: >-
+  AGL declares a sandbox but does not serve one. The AGL OPEN API's servers[] block lists
+  https://sandbox-agl-bridgeapi.tigergds.com with the description "Sandbox Environment" alongside
+  the production host; the sandbox hostname does not resolve (NXDOMAIN). No test credentials, test
+  golf club codes, test tee-time fixtures, magic values, simulator or time-travel tooling are
+  published for any of the three APIs, and the AGL OTA API and Trip.com outbound bridge declare no
+  non-production environment at all.
+environments:
+- name: Sandbox Environment
+  host: https://sandbox-agl-bridgeapi.tigergds.com
+  api: AGL OPEN API
+  declared_in: openapi/agl-open-openapi-original.yml#/servers/0
+  dns: NXDOMAIN
+  probed: '2026-09-12'
+- name: Action Center Environment
+  host: https://ac-gw-ota.tigergds.com
+  api: AGL OTA API
+  declared_in: openapi/agl-ota-openapi-original.yml#/servers/0
+  dns: resolves
+  http: 302 on /, 404 on unrouted paths
+  probed: '2026-09-12'
+  note: >-
+    Reachable, but the contract never says whether the Action Center is a test environment, an
+    operations console backend or a second production region - so it cannot be recorded as a
+    sandbox.
+test_credentials: []
+test_values: []
+notes: >-
+  Credentials are issued per partner - a clientId for the OTA API, an X-Supplier-Code or
+  X-Client-Code for the OPEN API - after the partnership application at
+  https://www.aglgw.com/en/partners or the console sign-up at
+  https://www.tigergds.com/signup/step1. Nothing self-service is published. No Sandbox pointer is
+  wired into apis.yml, because the only declared sandbox does not answer DNS.

@@ -1,0 +1,197 @@
+generated: '2026-09-12'
+method: probed
+source: live HTTPS probes, 2026-09-12
+path_echo_control: passed
+notes: >-
+  Eleven hosts probed against the named path list. AGL serves no /.well-known document of its own.
+  Two hosts returned a real RFC 9116 security.txt — api-doc.tigergds.com and
+  api-docs-agl-bridgeapi.tigergds.com — but the two bodies are byte-identical and belong to
+  Scalar (Contact mailto:marc@scalar.com, Encryption https://cdn.scalar.com/pgp-public.asc,
+  Expires 2025-11-19, already lapsed). Those two hostnames are CNAMEs onto the Scalar
+  documentation platform, so the document is the vendor's, not AGL's: it is recorded below as
+  evidence with credited:false and NO SecurityTxt / Security / WellKnown pointer is wired into
+  apis.yml on the strength of it. www.tigergds.com answers HTTP 200 for every path including the
+  negative control because every unauthenticated request 307s to /login, so it is a catch-all and
+  all of its rows are recorded as misses. rwg.tigergds.com (the Reserve-with-Google landing host
+  cited by Golf Business News) no longer resolves - NXDOMAIN.
+hit_count: 0
+hosts:
+- host: https://www.aglgw.com
+  documents:
+  - {path: /.well-known/security.txt, status: 404}
+  - {path: /.well-known/openid-configuration, status: 404}
+  - {path: /.well-known/oauth-authorization-server, status: 404}
+  - {path: /.well-known/oauth-protected-resource, status: 404}
+  - {path: /.well-known/api-catalog, status: 404}
+  - {path: /.well-known/ai-plugin.json, status: 404}
+  - {path: /.well-known/ucp.json, status: 404}
+  - {path: /.well-known/acp.json, status: 404}
+  - {path: /.well-known/aauth-resource.json, status: 404}
+  - {path: /.well-known/apis.json, status: 404}
+  - {path: /apis.json, status: 500}
+  - {path: /apis.yml, status: 500}
+  - {path: /.well-known/agent-card.json, status: 404}
+  - {path: /.well-known/agent.json, status: 404}
+  - {path: /llms.txt, status: 500}
+  - {path: /.well-known/agl-negative-control-7f3ab91c.json, status: 404}
+  note: >-
+    aglgw.com 301s to www.aglgw.com. The site answers 404 for unrouted /.well-known/* paths and
+    500 for unrouted root paths (/llms.txt, /apis.json, /apis.yml) - a server-error catch-all, not
+    a document. Negative control 404s, so the host is not path-echoing.
+- host: https://www.tigergds.com
+  soft_404_control: failed
+  documents:
+  - {path: /.well-known/security.txt, status: 307}
+  - {path: /.well-known/openid-configuration, status: 307}
+  - {path: /.well-known/oauth-authorization-server, status: 307}
+  - {path: /.well-known/oauth-protected-resource, status: 307}
+  - {path: /.well-known/api-catalog, status: 307}
+  - {path: /.well-known/ai-plugin.json, status: 307}
+  - {path: /.well-known/ucp.json, status: 307}
+  - {path: /.well-known/acp.json, status: 307}
+  - {path: /.well-known/aauth-resource.json, status: 307}
+  - {path: /.well-known/apis.json, status: 307}
+  - {path: /apis.json, status: 307}
+  - {path: /apis.yml, status: 307}
+  - {path: /.well-known/agent-card.json, status: 307}
+  - {path: /.well-known/agent.json, status: 307}
+  - {path: /llms.txt, status: 307}
+  - {path: /.well-known/agl-negative-control-7f3ab91c.json, status: 307}
+  note: >-
+    Every path 307s to /login?redirect=<path>, and following the redirect returns HTTP 200 with a
+    ~90KB Next.js login shell for every path INCLUDING the negative control. Catch-all: zero hits.
+- host: https://api-doc.tigergds.com
+  documents:
+  - path: /.well-known/security.txt
+    status: 200
+    file: agl-api-doc-scalar-security.txt
+    credited: false
+    subject: scalar.com
+    note: >-
+      PGP-signed RFC 9116 document, but it is Scalar's own (Contact mailto:marc@scalar.com,
+      Expires 2025-11-19T00:00:00.000Z - lapsed). This hostname is a CNAME onto the Scalar
+      documentation platform that renders AGL's OpenAPI. It is NOT an AGL security contact and is
+      not credited to AGL.
+  - {path: /.well-known/openid-configuration, status: 404}
+  - {path: /.well-known/oauth-authorization-server, status: 404}
+  - {path: /.well-known/oauth-protected-resource, status: 404}
+  - {path: /.well-known/api-catalog, status: 404}
+  - {path: /.well-known/ai-plugin.json, status: 404}
+  - {path: /.well-known/ucp.json, status: 404}
+  - {path: /.well-known/acp.json, status: 404}
+  - {path: /.well-known/aauth-resource.json, status: 404}
+  - {path: /.well-known/apis.json, status: 404}
+  - {path: /apis.json, status: 404}
+  - {path: /apis.yml, status: 404}
+  - {path: /.well-known/agent-card.json, status: 404}
+  - {path: /.well-known/agent.json, status: 404}
+  - {path: /llms.txt, status: 404}
+  - {path: /.well-known/agl-negative-control-7f3ab91c.json, status: 404}
+- host: https://api-docs-agl-bridgeapi.tigergds.com
+  documents:
+  - path: /.well-known/security.txt
+    status: 200
+    credited: false
+    subject: scalar.com
+    note: Byte-identical to the Scalar security.txt served on api-doc.tigergds.com; not AGL's.
+  - {path: /.well-known/openid-configuration, status: 404}
+  - {path: /.well-known/oauth-authorization-server, status: 404}
+  - {path: /.well-known/oauth-protected-resource, status: 404}
+  - {path: /.well-known/api-catalog, status: 404}
+  - {path: /.well-known/ai-plugin.json, status: 404}
+  - {path: /.well-known/ucp.json, status: 404}
+  - {path: /.well-known/acp.json, status: 404}
+  - {path: /.well-known/aauth-resource.json, status: 404}
+  - {path: /.well-known/apis.json, status: 404}
+  - {path: /apis.json, status: 404}
+  - {path: /apis.yml, status: 404}
+  - {path: /.well-known/agent-card.json, status: 404}
+  - {path: /.well-known/agent.json, status: 404}
+  - {path: /llms.txt, status: 404}
+  - {path: /.well-known/agl-negative-control-7f3ab91c.json, status: 404}
+- host: https://gw-ota.tigergds.com
+  documents:
+  - {path: /.well-known/security.txt, status: 404}
+  - {path: /.well-known/openid-configuration, status: 404}
+  - {path: /.well-known/oauth-authorization-server, status: 404}
+  - {path: /.well-known/oauth-protected-resource, status: 404}
+  - {path: /.well-known/api-catalog, status: 404}
+  - {path: /.well-known/ai-plugin.json, status: 404}
+  - {path: /.well-known/ucp.json, status: 404}
+  - {path: /.well-known/acp.json, status: 404}
+  - {path: /.well-known/aauth-resource.json, status: 404}
+  - {path: /.well-known/apis.json, status: 404}
+  - {path: /apis.json, status: 404}
+  - {path: /apis.yml, status: 404}
+  - {path: /.well-known/agent-card.json, status: 404}
+  - {path: /.well-known/agent.json, status: 404}
+  - {path: /llms.txt, status: 404}
+  - {path: /.well-known/agl-negative-control-7f3ab91c.json, status: 404}
+  note: AGL OTA API production host. Live (404s unrouted paths), serves no discovery documents.
+- host: https://ac-gw-ota.tigergds.com
+  documents:
+  - {path: /.well-known/security.txt, status: 404}
+  - {path: /.well-known/openid-configuration, status: 404}
+  - {path: /.well-known/oauth-authorization-server, status: 404}
+  - {path: /.well-known/oauth-protected-resource, status: 404}
+  - {path: /.well-known/api-catalog, status: 404}
+  - {path: /.well-known/ai-plugin.json, status: 404}
+  - {path: /.well-known/ucp.json, status: 404}
+  - {path: /.well-known/acp.json, status: 404}
+  - {path: /.well-known/aauth-resource.json, status: 404}
+  - {path: /.well-known/apis.json, status: 404}
+  - {path: /apis.json, status: 404}
+  - {path: /apis.yml, status: 404}
+  - {path: /.well-known/agent-card.json, status: 404}
+  - {path: /.well-known/agent.json, status: 404}
+  - {path: /llms.txt, status: 404}
+  - {path: /.well-known/agl-negative-control-7f3ab91c.json, status: 404}
+  note: AGL OTA API "Action Center" environment host declared in the OpenAPI servers[] block.
+- host: https://agl-bridgeapi.tigergds.com
+  documents:
+  - {path: /.well-known/security.txt, status: 404}
+  - {path: /.well-known/openid-configuration, status: 404}
+  - {path: /.well-known/oauth-authorization-server, status: 404}
+  - {path: /.well-known/oauth-protected-resource, status: 404}
+  - {path: /.well-known/api-catalog, status: 404}
+  - {path: /.well-known/ai-plugin.json, status: 404}
+  - {path: /.well-known/ucp.json, status: 404}
+  - {path: /.well-known/acp.json, status: 404}
+  - {path: /.well-known/aauth-resource.json, status: 404}
+  - {path: /.well-known/apis.json, status: 404}
+  - {path: /apis.json, status: 404}
+  - {path: /apis.yml, status: 404}
+  - {path: /.well-known/agent-card.json, status: 404}
+  - {path: /.well-known/agent.json, status: 404}
+  - {path: /llms.txt, status: 404}
+  - {path: /.well-known/agl-negative-control-7f3ab91c.json, status: 404}
+  note: AGL OPEN API production host. Live, serves no discovery documents.
+- host: https://outboundapi-trip-reserv.tigergds.com
+  documents:
+  - {path: /.well-known/security.txt, status: 404}
+  - {path: /.well-known/openid-configuration, status: 404}
+  - {path: /.well-known/oauth-authorization-server, status: 404}
+  - {path: /.well-known/oauth-protected-resource, status: 404}
+  - {path: /.well-known/api-catalog, status: 404}
+  - {path: /.well-known/ai-plugin.json, status: 404}
+  - {path: /.well-known/ucp.json, status: 404}
+  - {path: /.well-known/acp.json, status: 404}
+  - {path: /.well-known/aauth-resource.json, status: 404}
+  - {path: /.well-known/apis.json, status: 404}
+  - {path: /apis.json, status: 404}
+  - {path: /apis.yml, status: 404}
+  - {path: /.well-known/agent-card.json, status: 404}
+  - {path: /.well-known/agent.json, status: 404}
+  - {path: /llms.txt, status: 404}
+  - {path: /.well-known/agl-negative-control-7f3ab91c.json, status: 404}
+  note: Serves a Swagger UI at /swagger/index.html and the spec at /swagger/v1/swagger.json.
+- host: https://sandbox-agl-bridgeapi.tigergds.com
+  documents: []
+  note: >-
+    Declared as the "Sandbox Environment" in the AGL OPEN API servers[] block but the hostname does
+    not resolve (NXDOMAIN, 2026-09-12). No probe was possible.
+- host: https://rwg.tigergds.com
+  documents: []
+  note: >-
+    Reserve-with-Google landing host referenced in golfbusinessnews.com coverage. NXDOMAIN as of
+    2026-09-12; no probe was possible.

@@ -1,0 +1,106 @@
+generated: '2026-09-12'
+method: derived
+source: >-
+  openapi/agl-ota-openapi-original.yml, openapi/agl-open-openapi-original.yml,
+  openapi/agl-tripcom-outbound-openapi-original.yml
+format: vendor-envelope
+rfc9457: false
+summary: >-
+  AGL does not use RFC 9457 problem+json. Each of its two main contracts carries its own success /
+  failure envelope, and the codes below are the complete set the published specifications declare -
+  there is no separate error-code reference page on either documentation site to enrich them with,
+  so remediation text is derived from the schema descriptions and examples rather than searched.
+envelopes:
+- api: AGL OTA API
+  media_type: application/json
+  success_schema: CommonResponse
+  error_schema: ErrorResponse
+  discriminator_field: status
+  fields:
+    status: string enum - "ok" or "fail" on success responses; one of FL00, FL01, ET00 on the error
+      schema
+    statusDescription: human-readable failure text
+    data: object or null, the payload
+  note: >-
+    The OTA spec declares ONLY 200 responses on all 24 operations. Failures are returned inside the
+    envelope, so a client must branch on the status field and must not treat HTTP 200 as success.
+- api: AGL OPEN API
+  media_type: application/json
+  success_schema: SuccessResponse
+  error_schema: FailResponse
+  discriminator_field: isSuccess
+  fields:
+    isSuccess: boolean
+    rstCd: symbolic result code - SUCCESS on the success example, INVALID_INPUT on the fail example
+    rstMsg: human-readable result message
+    statusCode: integer, mirrors the HTTP status inside the body
+  note: Declares 200 and 400 on all seven operations.
+problems:
+- code: FL00
+  api: AGL OTA API
+  envelope_field: status
+  title: Request failed
+  detail: >-
+    Generic failure class declared on ErrorResponse.status. The spec's worked example for the
+    statusDescription field is "One of required parameter is missing.", which is consistent with
+    FL00 covering request-validation failures.
+  remediation: >-
+    Read statusDescription. Confirm the required query parameters are present - language and
+    currency are required on every OTA read operation, and most operations add a required
+    identifier (golfClubId, openDate, reservationNumber or reservationId).
+  source: openapi/agl-ota-openapi-original.yml#/components/schemas/ErrorResponse
+- code: FL01
+  api: AGL OTA API
+  envelope_field: status
+  title: Request failed - second failure class
+  detail: >-
+    Declared in the ErrorResponse status enum. The specification gives no description
+    distinguishing it from FL00; the distinction is not published.
+  remediation: Read statusDescription; the symbolic code alone is not actionable from the contract.
+  source: openapi/agl-ota-openapi-original.yml#/components/schemas/ErrorResponse
+  gap: true
+  gap_note: Undocumented meaning - worth raising with AGL.
+- code: ET00
+  api: AGL OTA API
+  envelope_field: status
+  title: Error / exception class
+  detail: >-
+    Third member of the ErrorResponse status enum, prefixed differently from the FL* pair, which
+    suggests a system/exception class rather than a request-validation failure. The specification
+    does not say so.
+  remediation: Retry is not documented as safe; there is no idempotency key, so a blind retry of a
+    mutating operation risks a duplicate reservation. Read statusDescription and escalate.
+  source: openapi/agl-ota-openapi-original.yml#/components/schemas/ErrorResponse
+  gap: true
+  gap_note: Undocumented meaning - worth raising with AGL.
+- code: SUCCESS
+  api: AGL OPEN API
+  envelope_field: rstCd
+  status: 200
+  title: Request was successful
+  detail: Published example value of SuccessResponse.rstCd, paired with isSuccess true and
+    statusCode 200.
+  source: openapi/agl-open-openapi-original.yml#/components/schemas/SuccessResponse
+- code: INVALID_INPUT
+  api: AGL OPEN API
+  envelope_field: rstCd
+  status: 400
+  title: Invalid input parameters
+  detail: >-
+    Published example value of FailResponse.rstCd, paired with isSuccess false and statusCode 400.
+    Every operation in the AGL OPEN API declares this 400 response with the description
+    "Invalid input".
+  remediation: >-
+    Check the required identification header for the direction of the call - X-Supplier-Code for
+    SupplierToAGL operations, X-Client-Code for AGLToSupplier operations - and the required body
+    fields. Both GET list operations additionally require golfClubCode, startDate and endDate.
+  source: openapi/agl-open-openapi-original.yml#/components/schemas/FailResponse
+coverage:
+  operations_total: 32
+  operations_declaring_4xx: 7
+  operations_declaring_5xx: 0
+  note: >-
+    Only the AGL OPEN API's seven operations declare a 4xx response. The 24 OTA operations and the
+    single Trip.com outbound operation declare a 200 and nothing else, so an integrator has no
+    contract-level description of what a failure looks like on the HTTP layer for 25 of 32
+    operations.

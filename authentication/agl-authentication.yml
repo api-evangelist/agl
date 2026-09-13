@@ -1,0 +1,108 @@
+generated: '2026-09-12'
+method: searched
+source: >-
+  openapi/agl-open-openapi-original.yml, openapi/agl-ota-openapi-original.yml,
+  openapi/agl-tripcom-outbound-openapi-original.yml
+docs: >-
+  https://api-docs-agl-bridgeapi.tigergds.com/reference (AGL OPEN API info.description states the
+  header contract in prose), https://api-doc.tigergds.com/reference
+summary:
+  types: [apiKey, http]
+  api_key_in: [header]
+  oauth2_flows: []
+  oauth2: false
+  oidc: false
+  mutual_tls: false
+  credential_issuance: >-
+    Manual. Credentials are issued per partner after the partnership application at
+    https://www.aglgw.com/en/partners or the TIGER GDS partner sign-up at
+    https://www.tigergds.com/signup/step1. There is no self-service key creation, no key-rotation
+    operation and no scope model anywhere in the platform.
+  request_signing: >-
+    Two of the three surfaces sign requests. The AGL OPEN API's Authorization header carries a
+    "Bearer <SHA-256 hashed signature>", and the Trip.com outbound bridge carries a sign value
+    alongside accountId, serviceName, requestTime and version in its request-header object.
+    Neither publishes the canonical string-to-sign, so neither signature can be implemented from
+    the public documentation alone - it has to come from AGL during onboarding.
+schemes:
+- name: bearerAuth
+  api: AGL OPEN API
+  type: http
+  scheme: bearer
+  bearerFormat: SHA-256
+  applied: globally via the root security block
+  docs_note: >-
+    "All APIs are secured using SHA-256-based Authorization and require proper identification
+    headers." - AGL OPEN API info.description.
+  sources: [openapi/agl-open-openapi-original.yml]
+- name: X-Supplier-Code
+  api: AGL OPEN API
+  type: identification-header
+  in: header
+  parameter: X-Supplier-Code
+  required: true
+  description: Supplier code issued by AGL. Required on every SupplierToAGL operation.
+  sources: [openapi/agl-open-openapi-original.yml]
+- name: X-Client-Code
+  api: AGL OPEN API
+  type: identification-header
+  in: header
+  parameter: X-Client-Code
+  required: true
+  description: >-
+    Client code issued by the supplier to AGL. Required on the AGLToSupplier operations - the
+    callbacks AGL makes into the supplier's endpoint.
+  sources: [openapi/agl-open-openapi-original.yml]
+- name: bearerAuth
+  api: AGL OTA API
+  type: apiKey
+  in: header
+  parameter: Authorization
+  applied: globally via the root security block
+  note: >-
+    Declared as an apiKey in the Authorization header rather than as http/bearer, so the contract
+    does not state whether the value is prefixed "Bearer ".
+  sources: [openapi/agl-ota-openapi-original.yml]
+- name: clientId
+  api: AGL OTA API
+  type: apiKey
+  in: header
+  parameter: clientId
+  applied: globally via the root security block
+  description: Partner identifier issued by AGL, sent alongside the Authorization token.
+  sources: [openapi/agl-ota-openapi-original.yml]
+- name: Bearer
+  api: AGL Trip.com Reservation Integration API
+  type: http
+  scheme: Bearer
+  bearerFormat: JWT
+  sources: [openapi/agl-tripcom-outbound-openapi-original.yml]
+- name: ClientId
+  api: AGL Trip.com Reservation Integration API
+  type: apiKey
+  in: header
+  parameter: ClientId
+  sources: [openapi/agl-tripcom-outbound-openapi-original.yml]
+- name: Currency
+  api: AGL Trip.com Reservation Integration API
+  type: apiKey
+  in: header
+  parameter: Currency
+  note: >-
+    Declared as a securityScheme but is a content-negotiation header, not a credential. Recorded
+    as the contract declares it.
+  sources: [openapi/agl-tripcom-outbound-openapi-original.yml]
+- name: Language
+  api: AGL Trip.com Reservation Integration API
+  type: apiKey
+  in: header
+  parameter: Language
+  note: Same as Currency - declared as a securityScheme but is not a credential.
+  sources: [openapi/agl-tripcom-outbound-openapi-original.yml]
+scopes:
+  supported: false
+  note: >-
+    No OAuth 2.0 and therefore no scope surface. Authorization is all-or-nothing per issued
+    credential, differentiated only by partner type (Provider Partner or Seller Partner, chosen at
+    sign-up) and by which of the two contracts the partner is given access to. No scopes/ artifact
+    is written - there is nothing to enumerate.

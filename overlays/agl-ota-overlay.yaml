@@ -1,0 +1,48 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for AGL OTA API
+  version: 1.0.0
+x-generated: '2026-09-12'
+x-method: generated
+x-source: api-evangelist enrichment pipeline, derived from the harvested original spec
+extends: openapi/agl-ota-openapi-original.yml
+actions:
+- target: $.info
+  update:
+    x-apievangelist-slug: agl
+    x-apievangelist-provider: AGL Inc.
+    x-apievangelist-harvested-from: https://api-doc.tigergds.com/reference
+    x-apievangelist-harvest-date: '2026-09-12'
+    x-error-envelope: Failures are returned inside a 200 response as CommonResponse.status == 'fail'; read the body,
+      not the HTTP status.
+    x-idempotency: none - no idempotency key on any of the eight mutating reservation operations
+    x-reversibility: Cancellation is available at every stage; the window is returned per reservation as CancellationPolicy.policies[].appliesUntil.
+- target: $.info
+  update:
+    contact:
+      name: AGL Inc. partnership desk
+      email: info@aglgw.com
+      url: https://www.aglgw.com/en/partners
+  x-note: Added from https://www.aglgw.com/en/partners; the original contract declares no info.contact.
+- target: $.paths['/v2/reservation/confirm'].post
+  update:
+    x-agentic-consequence: physical
+    x-agentic-note: Takes payment. Read the cancellation ladder returned by POST /v2/reservation/request before
+      calling.
+- target: $.paths['/v2/reservation'].delete
+  update:
+    x-agentic-reversal-of: POST /v2/reservation/confirm
+- target: $.tags
+  update:
+  - name: Codes
+    description: Reference code lookups. Every OTA read requires the language and currency query parameters.
+  - name: Golf Clubs
+    description: Golf club catalogue and detail.
+  - name: Tee Times
+    description: Open dates and open tee times for a golf club.
+  - name: Static Packages
+    description: Multi-night golf packages and their plan inventory.
+  - name: Reservations
+    description: 'Two-phase reservation lifecycle: request blocks inventory, confirm takes payment.'
+  x-note: The original contract tags every operation but declares an empty root tags array, so the tag descriptions
+    did not exist.

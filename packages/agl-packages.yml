@@ -1,0 +1,17 @@
+generated: '2026-09-12'
+method: searched
+source: >-
+  npm registry search (tigergds, aglgw, heyteetime), PyPI (tigergds, aglgw), GitHub
+  (github.com/aglgw, github.com/AGL-INC), and the published AGL API reference sites
+  https://api-doc.tigergds.com/reference and https://api-docs-agl-bridgeapi.tigergds.com/reference
+packages: []
+notes: >-
+  No first-party AGL / TIGER GDS client library was found in any public registry. npm search for
+  "tigergds", "aglgw" and "heyteetime" returned 0 results; pypi.org/pypi/tigergds/json and
+  pypi.org/pypi/aglgw/json both returned 404; the GitHub organization github.com/aglgw (name "AGL",
+  location "Korea, South", created 2024-03-18) exists and is reachable but publishes 0 public
+  repositories. Both published API reference sites are Scalar-hosted renderings of the OpenAPI
+  documents with no SDK or code-sample download. Integration is HTTP-direct: partners call the REST
+  contracts with an AGL-issued clientId / X-Supplier-Code and an Authorization header.
+package_count: 0
+official_package_count: 0

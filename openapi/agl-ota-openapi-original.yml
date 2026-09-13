@@ -1,0 +1,1933 @@
+openapi: 3.1.1
+info:
+  title: AGL OTA API
+  version: '2.0'
+  description: 'AGL OTA API provides RESTful access to golf-related data and operations, including
+
+    code lookup, golf club information, tee time availability, and reservation management.
+
+    update 2 June: added static package
+
+    '
+servers:
+- url: https://ac-gw-ota.tigergds.com
+  description: Action Center Environment
+- url: https://gw-ota.tigergds.com
+  description: Production Environment
+security:
+- bearerAuth: []
+  clientId: []
+components:
+  securitySchemes:
+    bearerAuth:
+      type: apiKey
+      name: Authorization
+      in: header
+    clientId:
+      type: apiKey
+      in: header
+      name: clientId
+  parameters:
+    LanguageParam:
+      name: language
+      in: query
+      required: true
+      schema:
+        type: string
+        enum:
+        - ko
+        - en
+        - ja
+        - es
+        - zh
+        - tw
+    CurrencyParam:
+      name: currency
+      in: query
+      required: true
+      schema:
+        type: string
+        examples:
+        - KRW
+    TransactionIdParam:
+      name: transactionId
+      in: query
+      required: true
+      schema:
+        type: string
+  schemas:
+    CommonResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+          - ok
+          - fail
+        data:
+          type:
+          - object
+          - 'null'
+          description: Payload of the response
+    ErrorResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+          - FL00
+          - FL01
+          - ET00
+        statusDescription:
+          type: string
+          examples:
+          - One of required parameter is missing.
+    MultiLanguageText:
+      type: object
+      properties:
+        en:
+          type: string
+        ko:
+          type: string
+        ja:
+          type: string
+        zh:
+          type: string
+        tw:
+          type: string
+        es:
+          type: string
+    AcceptedGroupSize:
+      type: number
+      enum:
+      - 1
+      - 2
+      - 3
+      - 4
+      - 5
+    AmountType:
+      type: string
+      enum:
+      - teeTimeAmount
+      - teeTimeSumAmount
+      - staticPackageAmount
+      - staticPackageTotalAmount
+      - cancellationFee
+      - cancellationFeePerc
+      description: type of the amount line. Used to identify the type of amount.
+    Continent:
+      type: object
+      properties:
+        id:
+          type: string
+          description: string that identifies a continent
+          examples:
+          - Asia
+        name:
+          $ref: '#/components/schemas/MultiLanguageText'
+    Country:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          $ref: '#/components/schemas/MultiLanguageText'
+        continentId:
+          type: string
+    Region:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          $ref: '#/components/schemas/MultiLanguageText'
+        countryId:
+          type: string
+    City:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          $ref: '#/components/schemas/MultiLanguageText'
+        countryId:
+          type: string
+    Airport:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          $ref: '#/components/schemas/MultiLanguageText'
+    GolfClub:
+      type: object
+      properties:
+        id:
+          type: string
+          examples:
+          - NA0123
+        name:
+          $ref: '#/components/schemas/MultiLanguageText'
+        thumbnailImages:
+          type: array
+          items:
+            type: string
+          description: list of thumbnail images for the golf course
+          examples:
+          - - https://tigerbooking.com/....
+        acceptedGroupSizes:
+          type: array
+          description: number of guests that the golf resort would accept for each tee time
+          items:
+            $ref: '#/components/schemas/AcceptedGroupSize'
+          examples:
+          - - 2
+            - 3
+            - 4
+        currency:
+          type: string
+        minPrice:
+          type: number
+          description: minimum price per tee-time that this club offers
+        minPriceDate:
+          type: string
+          description: date of that minimum price offer, in ISO-format
+          examples:
+          - '2025-01-01'
+        minPriceDateHour:
+          type: string
+          description: date and hour of that minimum price offer, in ISO-format. Always in local time.
+          examples:
+          - 2025-01-01 00:00
+        timezone:
+          type: string
+          description: timezone code of the golf club
+          examples:
+          - Asia/Seoul
+        category:
+          type: string
+          enum:
+          - standard
+          - package
+          examples:
+          - standard
+        lastUpdateAt:
+          type: string
+          description: last update datetime of this club information.
+          examples:
+          - '2025-01-01 00:00:00'
+    GolfClubDetail:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/GolfClub'
+      - type: object
+        properties:
+          informationId:
+            type: number
+            description: id of the golf club information associated with this golf club
+            examples:
+            - 1234
+          information:
+            $ref: '#/components/schemas/GolfClubInformation'
+          informationDetails:
+            $ref: '#/components/schemas/GolfClubInformationDetail'
+    GolfClubInformation:
+      type: object
+      properties:
+        heading:
+          $ref: '#/components/schemas/MultiLanguageText'
+        includedItems:
+          $ref: '#/components/schemas/MultiLanguageText'
+        excludedItems:
+          $ref: '#/components/schemas/MultiLanguageText'
+        cancellationPolicy:
+          $ref: '#/components/schemas/MultiLanguageText'
+        important:
+          $ref: '#/components/schemas/MultiLanguageText'
+        extraNote:
+          $ref: '#/components/schemas/MultiLanguageText'
+    GolfClubInformationDetail:
+      type: object
+      properties:
+        checkpoints:
+          $ref: '#/components/schemas/MultiLanguageText'
+        cntHoles:
+          type: number
+        par:
+          type: number
+        courseLength:
+          type: number
+        courseLengthUnit:
+          type: string
+          enum:
+          - yard
+          - meter
+        telephone:
+          type: string
+        address:
+          $ref: '#/components/schemas/MultiLanguageText'
+        homepageURL:
+          type: string
+        latitude:
+          type: number
+        longitude:
+          type: number
+        googlePlaceId:
+          type: string
+        courses:
+          type: array
+          items:
+            $ref: '#/components/schemas/GolfCourse'
+        facilities:
+          type: array
+          items:
+            $ref: '#/components/schemas/GolfClubFacility'
+    GolfClubFacility:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          $ref: '#/components/schemas/MultiLanguageText'
+        exists:
+          type: boolean
+    GolfCourse:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          $ref: '#/components/schemas/MultiLanguageText'
+        types:
+          type: array
+          items:
+            $ref: '#/components/schemas/CourseType'
+    CourseType:
+      type: object
+      properties:
+        id:
+          type: string
+        detail:
+          type: array
+          items:
+            $ref: '#/components/schemas/CourseTypeDetail'
+    CourseTypeDetail:
+      type: object
+      properties:
+        holeName:
+          type: string
+        par:
+          type: number
+        handicap:
+          type: number
+        red:
+          type: number
+        yellow:
+          type: number
+        white:
+          type: number
+        blue:
+          type: number
+        black:
+          type: number
+    StaticPackage:
+      type: object
+      properties:
+        id:
+          type: string
+          examples:
+          - (id of the package)
+        name:
+          $ref: '#/components/schemas/MultiLanguageText'
+        hotelNights:
+          type: number
+          examples:
+          - 2
+        packageNights:
+          type: number
+          examples:
+          - 3
+        thumbnailImages:
+          type: array
+          items:
+            type: string
+          description: list of thumbnail images for the golf course
+          examples:
+          - - https://tigerbooking.com/....
+        suggestedPlanItineraries:
+          $ref: '#/components/schemas/MultiLanguageText'
+        important:
+          $ref: '#/components/schemas/MultiLanguageText'
+        caution:
+          $ref: '#/components/schemas/MultiLanguageText'
+        etiquette:
+          $ref: '#/components/schemas/MultiLanguageText'
+        golfClubs:
+          type: array
+          items:
+            $ref: '#/components/schemas/GolfClubDetail'
+        includes:
+          type: array
+          items:
+            type: object
+            properties:
+              packageItemType:
+                type: string
+                enum:
+                - accommodation
+                - transportation
+                - caddy
+                - cart
+                - '...'
+              packageItemIncluded:
+                type: string
+                examples:
+                - included, excluded, ...
+        includedItemsText:
+          type: string
+          description: html, containing information of the items included in this package
+        disclaimerText:
+          type: string
+          description: html, containing terms and other conditions of this package item.
+    StaticPackagePlan:
+      type: object
+      properties:
+        id:
+          type: string
+        packageId:
+          type: string
+        thumbnailImages:
+          type: array
+          items:
+            type: string
+          description: list of thumbnail images for the golf course
+          examples:
+          - - https://tigerbooking.com/....
+        hashtags:
+          type: array
+          items:
+            $ref: '#/components/schemas/MultiLanguageText'
+        summaryDescription:
+          $ref: '#/components/schemas/MultiLanguageText'
+        golfClubs:
+          type: array
+          items:
+            $ref: '#/components/schemas/GolfClubDetail'
+        planOption:
+          type: object
+          properties:
+            startDate:
+              type: string
+              description: ISO-format date of starting date of this package
+              examples:
+              - '2025-05-15'
+            startHour:
+              type: string
+              description: hh:mm format hour of starting hour of this package
+              examples:
+              - '12:00'
+            endDate:
+              type: string
+              description: ISO-format date of starting date of this package
+              examples:
+              - '2025-05-15'
+            endHour:
+              type: string
+              description: hh:mm format hour of starting hour of this package
+              examples:
+              - '12:00'
+            mustArrivalTime:
+              type: string
+              description: The minimum required arrival time (hh:mm) for this package
+              examples:
+              - 08:30
+            mustDepartureTime:
+              type: string
+              description: The minimum required departure time (hh:mm) for this package
+              examples:
+              - '20:10'
+            acceptedGroupSizes:
+              type: array
+              description: number of guests that the package would accept
+              items:
+                $ref: '#/components/schemas/AcceptedGroupSize'
+              examples:
+              - - 2
+                - 3
+                - 4
+            canBeJoining:
+              type: boolean
+              description: True, if this plan can be used to joined with other players. False if full on their own. Usually
+                False, if groupSize=4
+            includes:
+              type: array
+              items:
+                type: object
+                properties:
+                  packageItemType:
+                    type: string
+                    enum:
+                    - accommodation
+                    - transportation
+                    - caddy
+                    - cart
+                    - '...'
+                  packageItemIncluded:
+                    type: string
+        planAdditionalInfo:
+          type: object
+          properties:
+            recommendedFlights:
+              type: array
+              items:
+                $ref: '#/components/schemas/RecommendedFlight'
+            meetingPointAirportCode:
+              type: string
+            meetingPointDescription:
+              type: string
+            dropOffAirportCode:
+              type: string
+            dropOffDescription:
+              type: string
+            accommodationInfos:
+              type: array
+              items:
+                $ref: '#/components/schemas/AccommodationInfo'
+            reservedForText1:
+              type: string
+            reservedForText2:
+              type: string
+        availability:
+          type: number
+          description: number of open slots for this plan, under this packageInfo. This is by slots, not counted by number
+            of travelers. (If acceptedGroupSize=4, it means 2*4 = 8 travelers can enjoy this package.)
+          examples:
+          - 2
+        retailPrices:
+          type: array
+          items:
+            type: object
+            properties:
+              groupSize:
+                type: number
+              amount:
+                $ref: '#/components/schemas/Amount'
+        supplyPrices:
+          type: array
+          items:
+            type: object
+            properties:
+              groupSize:
+                type: number
+              amount:
+                $ref: '#/components/schemas/Amount'
+        cancellationPolicy:
+          $ref: '#/components/schemas/CancellationPolicy'
+    AccommodationInfo:
+      type: object
+      properties:
+        type:
+          type: string
+          examples:
+          - hotel
+        hotel:
+          type: object
+          properties:
+            name:
+              $ref: '#/components/schemas/MultiLanguageText'
+            description:
+              $ref: '#/components/schemas/MultiLanguageText'
+            images:
+              type: array
+              items:
+                type: object
+                properties:
+                  url:
+                    type: string
+                  imageType:
+                    type: string
+                    enum:
+                    - main
+                    - small
+    Reservation:
+      type: object
+      properties:
+        reservationNumber:
+          type: string
+        reference:
+          type: string
+        payment:
+          $ref: '#/components/schemas/Payment'
+        charge:
+          $ref: '#/components/schemas/Payment'
+        reservations:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              reference:
+                type: string
+              reservationNumber:
+                type: string
+              status:
+                type: string
+                enum:
+                - REQUESTED
+                - ACTIVE
+                - USED
+                - CANCELLED
+              reservationType:
+                type: string
+                enum:
+                - TEE_TIME
+                - PACKAGE
+                - STATIC_PACKAGE
+              golfClubIds:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    golfClubId:
+                      type: string
+                    courseId:
+                      type: string
+              teeTime:
+                allOf:
+                - $ref: '#/components/schemas/TeeTime'
+                - $ref: '#/components/schemas/TeeBooker'
+                - $ref: '#/components/schemas/FlightInfo'
+                - $ref: '#/components/schemas/TeeGolfers'
+              staticPackage:
+                allOf:
+                - type: object
+                  properties:
+                    id:
+                      type: string
+                      description: id of the static package associated with this reservation. Required for static package
+                        reservations.
+                    planId:
+                      type: string
+                      description: id of the static package plan associated with this reservation. Required for static package
+                        reservations.
+                - $ref: '#/components/schemas/TeeBooker'
+                - $ref: '#/components/schemas/FlightInfo'
+                - $ref: '#/components/schemas/TeeGolfers'
+              cancellationPolicy:
+                $ref: '#/components/schemas/CancellationPolicy'
+    ReservationRequest:
+      type: object
+      required:
+      - reservationType
+      properties:
+        reference:
+          type: string
+          description: Reference number for the check reservation, such as ota booking reference number.
+        reservationType:
+          type: string
+          enum:
+          - TEE_TIME
+          - PACKAGE
+          - STATIC_PACKAGE
+          description: Type of the reservation. TEE_TIME for tee time reservation, PACKAGE for package reservation, and STATIC_PACKAGE
+            for static package reservation.
+        teeTime:
+          description: Tee time reservation information. Required for tee time reservations when reservationType is TEE_TIME.
+          allOf:
+          - type: object
+            properties:
+              id:
+                type: string
+                description: id of the tee time associated with this reservation. Required for tee time reservations when
+                  reservationType is TEE_TIME.
+            required:
+            - id
+          - $ref: '#/components/schemas/TeeBookerRequest'
+          - $ref: '#/components/schemas/FlightInfo'
+          - $ref: '#/components/schemas/TeeGolfersRequest'
+        staticPackage:
+          allOf:
+          - type: object
+            required:
+            - id
+            - planId
+            properties:
+              id:
+                type: string
+                description: id of the static package associated with this reservation. Required for static package reservations
+                  when reservationType is STATIC_PACKAGE.
+              planId:
+                type: string
+                description: id of the static package plan associated with this reservation. Required for static package reservations
+                  when reservationType is STATIC_PACKAGE.
+          - $ref: '#/components/schemas/TeeBookerRequest'
+          - $ref: '#/components/schemas/FlightInfo'
+          - $ref: '#/components/schemas/TeeGolfersRequest'
+          description: Static package reservation information. Required for static package reservations when reservationType
+            is STATIC_PACKAGE.
+    Amount:
+      type: object
+      properties:
+        reservationId:
+          type: string
+          description: id of the reservation that this amount is associated with. Required for tee time reservations.
+        currency:
+          type: string
+          examples:
+          - USD
+        amountType:
+          $ref: '#/components/schemas/AmountType'
+          examples:
+          - teeTimeAmount or teeTimeSumAmount or staticPackageAmount or staticPackageTotalAmount
+        amount:
+          type: number
+          format: decimal
+          examples:
+          - 156
+        amountCents:
+          type: number
+          description: 100x of the amount, to represent cents properly
+          examples:
+          - 15600
+        status:
+          enum:
+          - CHARGED
+          - VOIDED
+          nullable: true
+    TeetimeAmount:
+      type: object
+      properties:
+        currency:
+          type: string
+          examples:
+          - USD
+        amountType:
+          $ref: '#/components/schemas/AmountType'
+          examples:
+          - teeTimeAmount or teeTimeSumAmount or staticPackageAmount or staticPackageTotalAmount
+        amount:
+          type: number
+          format: decimal
+          examples:
+          - 156
+        amountCents:
+          type: number
+          description: 100x of the amount, to represent cents properly
+          examples:
+          - 15600
+    AmountRequest:
+      type: object
+      required:
+      - currency
+      - amountType
+      - amount
+      - amountCents
+      - status
+      properties:
+        reservationId:
+          type: string
+          description: id of the reservation that this amount is associated with. Required for static package reservations.
+        currency:
+          type: string
+        amountType:
+          $ref: '#/components/schemas/AmountType'
+          examples:
+          - teeTimeAmount or teeTimeSumAmount or staticPackageAmount or staticPackageTotalAmount
+        amount:
+          type: number
+          format: decimal
+          examples:
+          - 156
+        amountCents:
+          type: number
+          description: 100x of the amount, to represent cents properly
+          examples:
+          - 15600
+        status:
+          enum:
+          - CHARGED
+          - VOIDED
+    Payment:
+      type: object
+      properties:
+        id:
+          type: string
+        currency:
+          type: string
+        totalAmount:
+          type: number
+          format: decimal
+          examples:
+          - 156
+        amountLines:
+          type: array
+          items:
+            $ref: '#/components/schemas/Amount'
+        mobile:
+          type: string
+        email:
+          type: string
+        paymentMethod:
+          type: string
+          enum:
+          - CARD_STRIPE
+          - CARD_EXIMPAY
+          - CARD
+          - CASH
+          - AFT
+          description: 'AFT : postpaid'
+    PaymentRequest:
+      type: object
+      required:
+      - currency
+      - totalAmount
+      - amountLines
+      - email
+      - paymentMethod
+      properties:
+        currency:
+          type: string
+        totalAmount:
+          type: number
+          format: decimal
+          examples:
+          - 156
+        amountLines:
+          type: array
+          items:
+            $ref: '#/components/schemas/AmountRequest'
+        mobile:
+          type: string
+        email:
+          type: string
+        paymentMethod:
+          type: string
+          enum:
+          - CARD_STRIPE
+          - CARD_EXIMPAY
+          - CARD
+          - CASH
+          - AFT
+          description: 'AFT : postpaid'
+    ConfirmRequest:
+      type: object
+      required:
+      - currency
+      - totalAmount
+      - amountLines
+      - email
+      - paymentMethod
+      properties:
+        currency:
+          type: string
+        totalAmount:
+          type: number
+          format: decimal
+          examples:
+          - 156
+        amountLines:
+          type: array
+          items:
+            $ref: '#/components/schemas/AmountRequest'
+        mobile:
+          type: string
+        email:
+          type: string
+        paymentMethod:
+          type: string
+          enum:
+          - CARD_STRIPE
+          - CARD_EXIMPAY
+          - CARD
+          - CASH
+          - AFT
+          description: 'AFT : postpaid'
+    CancellationPolicy:
+      type: object
+      properties:
+        currency:
+          type: string
+        policies:
+          type: array
+          items:
+            type: object
+            properties:
+              amountType:
+                $ref: '#/components/schemas/AmountType'
+                examples:
+                - cancellationFee or cancellationFeePerc
+              amount:
+                type: number
+                format: decimal
+                description: Percentage of the cancellation fee or cancellation fee applied after a specific date and time
+                examples:
+                - 50
+              appliesUntil:
+                type: string
+                description: ISO format UTC date time that this cancellation policy applies
+                examples:
+                - 2025-02-22 11:00
+          examples:
+          - - amountType: cancellationFeePerc
+              amount: 50
+              appliesUntil: 2025-02-22 11:00
+            - amountType: cancellationFeePerc
+              amount: 100
+              appliesUntil: 2025-02-30 11:00
+    Course:
+      type: object
+      properties:
+        id:
+          type: string
+          examples:
+          - d229f6afc72e4533ba55a4ee89b0355a
+        name:
+          $ref: '#/components/schemas/MultiLanguageText'
+        teeTimes:
+          type: array
+          items:
+            $ref: '#/components/schemas/TeeTimeWithAmount'
+    TeeBooker:
+      type: object
+      properties:
+        booker:
+          type: object
+          properties:
+            nationality:
+              type: string
+            firstName:
+              type: string
+            lastName:
+              type: string
+            phone:
+              type: string
+            email:
+              type: string
+            countGolfers:
+              $ref: '#/components/schemas/AcceptedGroupSize'
+    TeeBookerRequest:
+      required:
+      - booker
+      type: object
+      properties:
+        booker:
+          type: object
+          required:
+          - firstName
+          - lastName
+          - phone
+          - email
+          - countGolfers
+          properties:
+            nationality:
+              type: string
+            firstName:
+              type: string
+            lastName:
+              type: string
+            phone:
+              type: string
+            email:
+              type: string
+            countGolfers:
+              $ref: '#/components/schemas/AcceptedGroupSize'
+    FlightInfo:
+      type: object
+      properties:
+        flight:
+          type: object
+          properties:
+            inboundFlightNumber:
+              type: string
+              description: flight number of the inboound flight
+              examples:
+              - KE001
+            inboundDepartureDate:
+              type: string
+              description: ISO format date of the departure date of the inbound flight
+              examples:
+              - '2025-01-01'
+            inboundDepartureTime:
+              type: string
+              description: ISO format time of the departure time of the inbound flight
+              examples:
+              - 08:00
+            inboundDepartureAirportCode:
+              type: string
+              description: airport code of the inbound flight departure airport
+              examples:
+              - ICN
+            inboundArrivalDate:
+              type: string
+              description: ISO format date of the arrival date of the inbound flight
+              examples:
+              - '2025-01-01'
+            inboundArrivalTime:
+              type: string
+              description: ISO format time of the arrival time of the inbound flight
+              examples:
+              - '13:00'
+            inboundArrivalAirportCode:
+              type: string
+              description: airport code of the inbound flight arrival airport
+              examples:
+              - PUS
+            outboundFlightNumber:
+              type: string
+              description: flight number of the outbound flight
+              examples:
+              - KE002
+            outboundDepartureDate:
+              type: string
+              description: ISO format date of the departure date of the outbound flight
+              examples:
+              - '2025-01-03'
+            outboundDepartureTime:
+              type: string
+              description: ISO format time of the departure time of the outbound flight
+              examples:
+              - '21:00'
+            outboundDepartureAirportCode:
+              type: string
+              description: airport code of the outbound flight departure airport
+              examples:
+              - PUS
+            outboundArrivalDate:
+              type: string
+              description: ISO format date of the arrival date of the outbound flight
+              examples:
+              - '2025-01-01'
+            outboundArrivalTime:
+              type: string
+              description: ISO format time of the arrival time of the outbound flight
+              examples:
+              - '24:00'
+            outboundArrivalAirportCode:
+              type: string
+              description: airport code of the outbound flight arrival airport
+              examples:
+              - ICN
+            memo:
+              type: string
+              description: memo for the flight
+    RecommendedFlight:
+      type: object
+      properties:
+        inboundFlightNumber:
+          type: string
+          description: flight number of the inboound flight
+          examples:
+          - KE001
+        inboundFlightTime:
+          type: string
+          description: ISO format time of the inbound flight
+          examples:
+          - 08:00
+        inboundDepartureAirportCode:
+          type: string
+          description: airport code of the inbound flight departure airport
+          examples:
+          - ICN
+        inboundArrivalAirportCode:
+          type: string
+          description: airport code of the inbound flight arrival airport
+          examples:
+          - PUS
+        outboundFlightNumber:
+          type: string
+          description: flight number of the outbound flight
+          examples:
+          - KE002
+        outboundFlightTime:
+          type: string
+          description: ISO format time of the outbound flight
+          examples:
+          - '22:00'
+        outboundDepartureAirportCode:
+          type: string
+          description: airport code of the outbound flight departure airport
+          examples:
+          - PUS
+        outboundArrivalAirportCode:
+          type: string
+          description: airport code of the outbound flight arrival airport
+          examples:
+          - ICN
+    TeeGolfers:
+      type: object
+      properties:
+        golfers:
+          type: array
+          description: list of golfers that are playing in this tee time.
+          minItems: 1
+          maxItems: 4
+          items:
+            type: object
+            properties:
+              firstName:
+                type: string
+                description: first name of the golfer
+                examples:
+                - John
+              lastName:
+                type: string
+                description: last name of the golfer
+                examples:
+                - Doe
+              gender:
+                type: string
+                enum:
+                - M
+                - F
+    TeeGolfersRequest:
+      type: object
+      required:
+      - golfers
+      properties:
+        golfers:
+          type: array
+          description: list of golfers that are playing in this tee time.
+          minItems: 1
+          maxItems: 4
+          items:
+            type: object
+            required:
+            - firstName
+            - lastName
+            properties:
+              firstName:
+                type: string
+                description: first name of the golfer
+                examples:
+                - John
+              lastName:
+                type: string
+                description: last name of the golfer
+                examples:
+                - Doe
+              gender:
+                type: string
+                enum:
+                - M
+                - F
+    TeeTime:
+      type: object
+      properties:
+        id:
+          type: string
+          description: id of the teeTime.
+        teeDate:
+          type: string
+          description: ISO format date of this teetime's date
+          examples:
+          - '2025-01-01'
+        teeTimeAt:
+          type: string
+          description: ISO format time of this teetime's time
+          examples:
+          - 08:00
+        teeTimeAtObject:
+          type: object
+          properties:
+            year:
+              type: number
+              examples:
+              - 2025
+            month:
+              type: number
+              examples:
+              - 1
+            date:
+              type: number
+              examples:
+              - 1
+            hour:
+              type: number
+              examples:
+              - 8
+            minute:
+              type: number
+              examples:
+              - 0
+    TeeTimeWithAmount:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/TeeTime'
+      - type: object
+        properties:
+          confirmationType:
+            type: string
+            enum:
+            - immediate
+            - manual_confirmation
+          acceptedGroupSizes:
+            type: array
+            description: number of guests that the golf resort would accept for each tee time
+            items:
+              $ref: '#/components/schemas/AcceptedGroupSize'
+            examples:
+            - - 4
+          amounts:
+            type: array
+            items:
+              type: object
+              properties:
+                groupSize:
+                  type: number
+                  examples:
+                  - 4
+                amount:
+                  $ref: '#/components/schemas/TeetimeAmount'
+paths:
+  /v2/codes/languages:
+    get:
+      summary: Get supported language codes
+      description: list of supported language codes
+      tags:
+      - Codes
+      responses:
+        '200':
+          description: list of supported language 2-lettered codes.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/CommonResponse'
+                - type: object
+                  properties:
+                    data:
+                      type: object
+                      properties:
+                        languages:
+                          type: array
+                          items:
+                            enum:
+                            - ko
+                            - en
+                            - ja
+                            - es
+                            - zh
+                            - tw
+  /v2/codes/currencies:
+    get:
+      summary: Get supported currency codes
+      description: list of supported currencies
+      tags:
+      - Codes
+      responses:
+        '200':
+          description: list of supported currency 3-lettered codes.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/CommonResponse'
+                - type: object
+                  properties:
+                    data:
+                      type: object
+                      properties:
+                        currencies:
+                          type: array
+                          items:
+                            enum:
+                            - KRW
+                            - USD
+                            - GBP
+                            - EUR
+                            - JPY
+                            - SGD
+                            - TWD
+  /v2/codes/continents:
+    get:
+      summary: Get continent codes
+      tags:
+      - Codes
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/CommonResponse'
+                - type: object
+                  properties:
+                    data:
+                      type: object
+                      properties:
+                        continents:
+                          type: array
+                          items:
+                            $ref: '#/components/schemas/Continent'
+  /v2/codes/countries:
+    get:
+      summary: Get country codes by continent
+      tags:
+      - Codes
+      parameters:
+      - name: continentCodes
+        in: query
+        schema:
+          type: string
+        description: continentCode to query. If wish to query multiple, then can use comma to list values.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/CommonResponse'
+                - type: object
+                  properties:
+                    data:
+                      type: object
+                      properties:
+                        countries:
+                          type: array
+                          items:
+                            $ref: '#/components/schemas/Country'
+  /v2/codes/regions:
+    get:
+      summary: Get region codes by country
+      tags:
+      - Codes
+      parameters:
+      - name: countryCodes
+        in: query
+        schema:
+          type: string
+        description: countryCode to query. If wish to query multiple, then can use comma to list values.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/CommonResponse'
+                - type: object
+                  properties:
+                    data:
+                      type: object
+                      properties:
+                        countries:
+                          type: array
+                          items:
+                            $ref: '#/components/schemas/Region'
+  /v2/codes/cities:
+    get:
+      summary: Get city codes by country
+      tags:
+      - Codes
+      parameters:
+      - name: countryCodes
+        in: query
+        schema:
+          type: string
+        description: countryCode to query. If wish to query multiple, then can use comma to list values.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/CommonResponse'
+                - type: object
+                  properties:
+                    data:
+                      type: object
+                      properties:
+                        cities:
+                          type: array
+                          items:
+                            $ref: '#/components/schemas/City'
+  /v2/codes/airports:
+    get:
+      summary: Get airport codes
+      description: list of supported airport codes
+      tags:
+      - Codes
+      responses:
+        '200':
+          description: list of supported currency 3-lettered codes.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/CommonResponse'
+                - type: object
+                  properties:
+                    data:
+                      type: object
+                      properties:
+                        airports:
+                          type: array
+                          items:
+                            $ref: '#/components/schemas/Airport'
+  /v2/codes/facilities:
+    get:
+      summary: Get facilities codes
+      description: list of all facilities that a golf club may have
+      tags:
+      - Codes
+      responses:
+        '200':
+          description: list of all facilities that a golf club may have
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/CommonResponse'
+                - type: object
+                  properties:
+                    data:
+                      type: object
+                      properties:
+                        facilities:
+                          type: array
+                          items:
+                            $ref: '#/components/schemas/GolfClubFacility'
+  /v2/codes/packageItemCodes:
+    get:
+      summary: get list of possible package item codes such as accommodation, breakfast, transportation, ...
+      tags:
+      - Codes
+      responses:
+        '200':
+          description: list of packageItems that can be included in packageItems
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/CommonResponse'
+                - type: object
+                  properties:
+                    data:
+                      type: object
+                      properties:
+                        packageItemCodes:
+                          type: array
+                          items:
+                            type: string
+                            enum:
+                            - flights
+                            - accomodation
+                            - transportation
+                            - golfCart
+                            - caddie
+                            - breakfast
+                            - lunch
+                            - dinner
+  /v2/golfClubs:
+    get:
+      summary: Get list of golf clubs
+      description: returns list of golf clubs searched based on query. Does not return details.
+      tags:
+      - Golf Clubs
+      parameters:
+      - $ref: '#/components/parameters/LanguageParam'
+      - $ref: '#/components/parameters/CurrencyParam'
+      - name: codeType
+        schema:
+          type: string
+          enum:
+          - continent
+          - country
+          - region
+          - city
+          - airport
+          - facility
+        in: query
+      - name: codeValues
+        in: query
+        schema:
+          type: string
+          examples:
+          - a,e
+        description: value of the code that which to query. use comma to join multiple values.
+      responses:
+        '200':
+          description: list of golf clubs under given query
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/CommonResponse'
+                - type: object
+                  properties:
+                    data:
+                      type: object
+                      properties:
+                        golfClubs:
+                          type: array
+                          items:
+                            $ref: '#/components/schemas/GolfClub'
+  /v2/golfClub:
+    get:
+      summary: Get golf club detail
+      tags:
+      - Golf Clubs
+      parameters:
+      - $ref: '#/components/parameters/LanguageParam'
+      - $ref: '#/components/parameters/CurrencyParam'
+      - name: golfClubId
+        in: query
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: returns golf club details searched based on query.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/CommonResponse'
+                - type: object
+                  properties:
+                    data:
+                      type: object
+                      properties:
+                        golfClub:
+                          $ref: '#/components/schemas/GolfClubDetail'
+  /v2/teeTime/openDates:
+    get:
+      summary: Get available tee time dates
+      tags:
+      - Tee Times
+      parameters:
+      - name: golfClubId
+        in: query
+        schema:
+          type: string
+        required: true
+        examples:
+          default:
+            value: ABC123
+      - name: fromDate
+        in: query
+        required: true
+        schema:
+          type: string
+        description: ISO formatted date
+        examples:
+          default:
+            value: '2025-01-01'
+      - name: toDate
+        in: query
+        required: true
+        schema:
+          type: string
+        description: ISO formatted date
+        examples:
+          default:
+            value: '2025-01-01'
+      responses:
+        '200':
+          description: list of open dates that a golf club have, within dates provided. window may not exceed 1 year.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/CommonResponse'
+                - type: object
+                  properties:
+                    data:
+                      type: object
+                      properties:
+                        openDates:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              openDate:
+                                type: string
+                                format: ISO-formatted date yyyy-MM-dd
+                                examples:
+                                - '2025-01-01'
+                              openDateObject:
+                                type: object
+                                properties:
+                                  year:
+                                    type: number
+                                    examples:
+                                    - 2025
+                                  month:
+                                    type: number
+                                    examples:
+                                    - 1
+                                  date:
+                                    type: number
+                                    examples:
+                                    - 1
+  /v2/teeTime/openTeeTimes:
+    get:
+      summary: Get detailed tee times by golf club and date
+      tags:
+      - Tee Times
+      parameters:
+      - name: golfClubId
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: openDate
+        in: query
+        required: true
+        schema:
+          type: string
+          format: ISO-formatted date
+      - $ref: '#/components/parameters/LanguageParam'
+      - $ref: '#/components/parameters/CurrencyParam'
+      responses:
+        '200':
+          description: Available courses and tee times for the specified date.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/CommonResponse'
+                - type: object
+                  properties:
+                    data:
+                      type: object
+                      properties:
+                        courses:
+                          type: array
+                          items:
+                            $ref: '#/components/schemas/Course'
+  /v2/staticPackage/packages:
+    get:
+      summary: get list of packages
+      tags:
+      - Static Packages
+      parameters:
+      - $ref: '#/components/parameters/LanguageParam'
+      - $ref: '#/components/parameters/CurrencyParam'
+      - name: codeType
+        in: query
+        schema:
+          type: string
+          enum:
+          - continent
+          - country
+          - region
+          - city
+          - airport
+          - facility
+          - packageItem
+        description: use codeType and codeValue if you wish to search using codes.
+      - name: codeValues
+        in: query
+        schema:
+          type: string
+          description: value of the code that which to query. use comma to join multiple values.
+      responses:
+        '200':
+          description: list of packages, available under the golf club id. If no golf club is stated, all packages are returned.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/CommonResponse'
+                - type: object
+                  properties:
+                    data:
+                      type: object
+                      properties:
+                        packages:
+                          type: array
+                          items:
+                            $ref: '#/components/schemas/StaticPackage'
+  /v2/staticPackage/plans:
+    get:
+      summary: Get package inventories, including stocks, by each options including dates, groupSizes
+      tags:
+      - Static Packages
+      parameters:
+      - $ref: '#/components/parameters/LanguageParam'
+      - $ref: '#/components/parameters/CurrencyParam'
+      - name: packageId
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: fromDate
+        in: query
+        schema:
+          type: string
+        description: ISO formatted date
+        examples:
+          default:
+            value: '2025-01-01'
+      - name: toDate
+        in: query
+        schema:
+          type: string
+        description: ISO formatted date
+        examples:
+          default:
+            value: '2025-01-01'
+      responses:
+        '200':
+          description: list of static package inventories, including stocks, by each options including dates, groupSizes
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/CommonResponse'
+                - type: object
+                  properties:
+                    data:
+                      type: object
+                      properties:
+                        plans:
+                          type: array
+                          items:
+                            $ref: '#/components/schemas/StaticPackagePlan'
+  /v2/reservation/request:
+    post:
+      summary: Make a reservation request. Blocks a tee time before it is paid and confirm. Such block will be released after
+        30 minutes if not confirmed later.
+      description: Only one reservation request can be made at a time. If there is an existing integrated reservation number,
+        include it in the reservationNumber field when making the request.
+      tags:
+      - Reservations
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reservationNumber:
+                  type: string
+                  description: Integrated reservation number. If not provided, a new reservation will be created.
+                reference:
+                  type: string
+                  description: Reference number for the check reservation, such as ota booking reference number.
+                reservations:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/ReservationRequest'
+                  maxItems: 1
+                  minItems: 1
+      responses:
+        '200':
+          description: Reservation request result,
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/CommonResponse'
+                - type: object
+                  properties:
+                    data:
+                      type: object
+                      properties:
+                        reservationId:
+                          type: string
+                        reservationNumber:
+                          type: string
+                          description: Integrated reservation number
+                        cancellationPolicy:
+                          $ref: '#/components/schemas/CancellationPolicy'
+    delete:
+      summary: Cancel a single reservation request.
+      description: Cancels one reservation request identified by reservationId. Use this endpoint to revoke a specific request
+        only. It affects only the targeted request, even if it belongs to a group that shares the same integrated reservation
+        number.
+      tags:
+      - Reservations
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - reservationId
+              properties:
+                reservationId:
+                  type: string
+      responses:
+        '200':
+          description: cancelled reservation request.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/CommonResponse'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/Reservation'
+  /v2/reservation/requests:
+    delete:
+      summary: Cancel reservation requests by integrated reservation number.
+      description: Cancels all reservation requests associated with the provided reservationNumber (integrated reservation
+        number). Use this endpoint to invalidate every request created under the same integrated reservation number in a single
+        operation.
+      tags:
+      - Reservations
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - reservationNumber
+              properties:
+                reservationNumber:
+                  type: string
+      responses:
+        '200':
+          description: cancelled reservation request.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/CommonResponse'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/Reservation'
+  /v2/reservation/confirm:
+    post:
+      summary: Confirm reservation
+      tags:
+      - Reservations
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - reservationNumber
+              - payment
+              properties:
+                reservationNumber:
+                  type: string
+                payment:
+                  $ref: '#/components/schemas/ConfirmRequest'
+      responses:
+        '200':
+          description: Reservation coinfirm result,
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/CommonResponse'
+                - type: object
+                  properties:
+                    data:
+                      type: object
+                      properties:
+                        paymentId:
+                          type: string
+                          examples:
+                          - 00264e5043674c198dc9ddcb410d6454
+                        reservationNumber:
+                          type: string
+                          examples:
+                          - 25556D5FB8
+  /v2/reservation/partialcancel:
+    post:
+      summary: Cancel a reservation partially
+      tags:
+      - Reservations
+      parameters:
+      - name: reservationId
+        in: query
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: cancelled reservation.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/CommonResponse'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/Reservation'
+  /v2/reservation:
+    get:
+      summary: Inquiry reservation details
+      tags:
+      - Reservations
+      parameters:
+      - name: reservationNumber
+        in: query
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: cancelled reservation.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/CommonResponse'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/Reservation'
+    delete:
+      summary: Cancel a reservation.
+      tags:
+      - Reservations
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - reservationNumber
+              properties:
+                reservationNumber:
+                  type: string
+      responses:
+        '200':
+          description: cancelled reservation.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/CommonResponse'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/Reservation'
+  /v2/reservation/sendVoucher:
+    post:
+      summary: Send reservation voucher
+      tags:
+      - Reservations
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - reservationNumber
+              properties:
+                reservationNumber:
+                  type: string
+      responses:
+        '200':
+          description: no data returned for this request.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/CommonResponse'

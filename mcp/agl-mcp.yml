@@ -1,0 +1,132 @@
+generated: '2026-09-12'
+method: derived
+status: candidate
+source: openapi/agl-ota-openapi-original.yml
+searched:
+  registries:
+  - npm search tigergds / aglgw / heyteetime - 0 results
+  - PyPI tigergds and aglgw - HTTP 404
+  - GitHub org github.com/aglgw - exists, 0 public repositories
+  docs:
+  - https://api-doc.tigergds.com/reference
+  - https://api-docs-agl-bridgeapi.tigergds.com/reference
+  - https://www.aglgw.com/en/
+  probes: /.well-known/ai-plugin.json returned 404 on all eight resolvable AGL hosts on 2026-09-12; no
+    /mcp endpoint is advertised anywhere.
+  result: none
+deployment:
+  mode: none
+  endpoint: null
+  install: null
+  package: null
+  auth: api-key
+  verified: derived
+note: AGL ships no MCP server, hosted or local. The tools below are a CANDIDATE set derived from the published
+  AGL OTA API operations - they describe what an MCP server over TIGER GDS could expose, not anything
+  AGL operates. No endpoint URL is asserted. Tool names are synthesised from the HTTP method and path
+  because the source specification declares no operationIds; each tool records the exact method and path
+  it came from so the binding is verifiable.
+server:
+  name: agl-tiger-gds
+  transport: null
+tools:
+- name: list_languages
+  description: Get supported language codes
+  write: false
+  source_operation: openapi/agl-ota-openapi-original.yml#GET /v2/codes/languages
+- name: list_currencies
+  description: Get supported currency codes
+  write: false
+  source_operation: openapi/agl-ota-openapi-original.yml#GET /v2/codes/currencies
+- name: list_continents
+  description: Get continent codes
+  write: false
+  source_operation: openapi/agl-ota-openapi-original.yml#GET /v2/codes/continents
+- name: list_countries
+  description: Get country codes by continent
+  write: false
+  source_operation: openapi/agl-ota-openapi-original.yml#GET /v2/codes/countries
+- name: list_regions
+  description: Get region codes by country
+  write: false
+  source_operation: openapi/agl-ota-openapi-original.yml#GET /v2/codes/regions
+- name: list_cities
+  description: Get city codes by country
+  write: false
+  source_operation: openapi/agl-ota-openapi-original.yml#GET /v2/codes/cities
+- name: list_airports
+  description: Get airport codes
+  write: false
+  source_operation: openapi/agl-ota-openapi-original.yml#GET /v2/codes/airports
+- name: list_facilities
+  description: Get facilities codes
+  write: false
+  source_operation: openapi/agl-ota-openapi-original.yml#GET /v2/codes/facilities
+- name: list_package_item_codes
+  description: Get possible package item codes such as accommodation and breakfast
+  write: false
+  source_operation: openapi/agl-ota-openapi-original.yml#GET /v2/codes/packageItemCodes
+- name: search_golf_clubs
+  description: Search golf clubs by code type and comma-joined code values; returns summaries without
+    detail
+  write: false
+  source_operation: openapi/agl-ota-openapi-original.yml#GET /v2/golfClubs
+- name: get_golf_club
+  description: Get golf club detail including courses, facilities and hole cards
+  write: false
+  source_operation: openapi/agl-ota-openapi-original.yml#GET /v2/golfClub
+- name: list_open_tee_dates
+  description: Get the dates a golf club has tee times available
+  write: false
+  source_operation: openapi/agl-ota-openapi-original.yml#GET /v2/teeTime/openDates
+- name: list_open_tee_times
+  description: Get detailed tee times by golf club and date
+  write: false
+  source_operation: openapi/agl-ota-openapi-original.yml#GET /v2/teeTime/openTeeTimes
+- name: list_static_packages
+  description: Get the list of static golf packages
+  write: false
+  source_operation: openapi/agl-ota-openapi-original.yml#GET /v2/staticPackage/packages
+- name: list_static_package_plans
+  description: Get package inventories including stock by option and date
+  write: false
+  source_operation: openapi/agl-ota-openapi-original.yml#GET /v2/staticPackage/plans
+- name: request_reservation
+  description: Block a tee time before payment and return the cancellation policy
+  write: true
+  source_operation: openapi/agl-ota-openapi-original.yml#POST /v2/reservation/request
+- name: cancel_reservation_request
+  description: Cancel a single unpaid reservation request by reservationId
+  write: true
+  source_operation: openapi/agl-ota-openapi-original.yml#DELETE /v2/reservation/request
+- name: cancel_reservation_requests
+  description: Cancel all reservation requests sharing an integrated reservation number
+  write: true
+  source_operation: openapi/agl-ota-openapi-original.yml#DELETE /v2/reservation/requests
+- name: confirm_reservation
+  description: Confirm a reservation and take payment
+  write: true
+  source_operation: openapi/agl-ota-openapi-original.yml#POST /v2/reservation/confirm
+- name: partial_cancel_reservation
+  description: Cancel a confirmed reservation partially
+  write: true
+  source_operation: openapi/agl-ota-openapi-original.yml#POST /v2/reservation/partialcancel
+- name: get_reservation
+  description: Look up reservation details by integrated reservation number
+  write: false
+  source_operation: openapi/agl-ota-openapi-original.yml#GET /v2/reservation
+- name: cancel_reservation
+  description: Cancel a confirmed reservation
+  write: true
+  source_operation: openapi/agl-ota-openapi-original.yml#DELETE /v2/reservation
+- name: send_reservation_voucher
+  description: Send the reservation voucher
+  write: true
+  source_operation: openapi/agl-ota-openapi-original.yml#POST /v2/reservation/sendVoucher
+tool_count: 23
+agent_warnings:
+- There is no idempotency key on any write. A retried request_reservation creates a second hold.
+- Failures are returned inside an HTTP 200 envelope (status "fail"), so an agent must branch on the body,
+  not the status code.
+- confirm_reservation takes payment. The cancellation ladder returned by request_reservation (CancellationPolicy.policies[].appliesUntil)
+  is the only reversal window and must be read before confirming.

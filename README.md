@@ -1,4 +1,4 @@
-# Agl9b00
+# AGL
 
 <!-- API-EVANGELIST-PROVENANCE:BEGIN -->
 > ### About this repository
@@ -64,5 +64,40 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-Agl9b00 is a company surfaced via the API Evangelist harvest backlog (source: secondary-market) and added to the network as a stub for full-pipeline profiling.
-- https://equityzen.com/company/agl9b00
+AGL Inc. (에이지엘) is a Seoul-headquartered golf technology company, founded in 2019, that operates
+**TIGER GDS** — a global distribution system for golf. Its SaaS platform connects golf club tee-time
+inventory to travel and booking channels in real time across more than 1,000 contracted courses in
+30+ countries, and is the system behind the HeyTeeTime / TIGERBOOKING consumer apps and the Reserve
+with Google golf integration. Offices in Seoul, Tokyo, Brea (California) and Singapore.
+
+## What AGL publishes
+
+Three machine-readable REST contracts, all served from `tigergds.com`:
+
+| API | Spec | Ops | Docs |
+|---|---|---|---|
+| AGL OTA API 2.0 | OpenAPI 3.1.1 | 24 | <https://api-doc.tigergds.com/reference> |
+| AGL OPEN API 0.0.1 (supplier bridge) | OpenAPI 3.1.1 | 7 | <https://api-docs-agl-bridgeapi.tigergds.com/reference> |
+| AGL Trip.com Reservation Integration API 1.0 | OpenAPI 3.0.1 | 1 | <https://outboundapi-trip-reserv.tigergds.com/swagger/index.html> |
+
+None of these is linked from `aglgw.com`, which advertises "API method — Direct API integration"
+on its Golf Club and Partner Channel pages and routes every reader to a partnership form. The
+contracts were found through certificate transparency on `tigergds.com` and are publicly readable.
+
+## Notes for an integrator
+
+- **HTTP 200 is not success on the OTA API.** It declares only `200` responses; failures come back
+  as `CommonResponse.status == "fail"` with codes `FL00`, `FL01` or `ET00` — two of which the
+  specification never defines.
+- **No idempotency key** on any of the ten mutating operations.
+- **Reversal is well covered and the window is data**: `POST /v2/reservation/request` returns a
+  `CancellationPolicy` whose tiers carry `appliesUntil` cut-offs and fee percentages.
+- **Tee times cannot be updated** — AGL's own contract says so; set unavailable, then re-register.
+- **The declared sandbox does not exist**: the AGL OPEN API lists
+  `https://sandbox-agl-bridgeapi.tigergds.com` as its Sandbox Environment and the host returns
+  NXDOMAIN (probed 2026-09-12).
+- No published rate limits, status page, deprecation policy, changelog, SDK, CLI, MCP server or
+  A2A agent card.
+
+Everything in this repository was assembled from those public surfaces. See `apis.yml` for the
+full artifact index.

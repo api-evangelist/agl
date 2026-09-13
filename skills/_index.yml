@@ -1,0 +1,21 @@
+generated: '2026-09-12'
+method: generated
+source: >-
+  Generated from the harvested AGL OpenAPI documents. AGL publishes no AGENTS.md, skills directory
+  or agent guidance of its own - both documentation sites are Scalar renderings of the raw
+  specification with the default "Getting Started" guide page left unedited.
+note: >-
+  Neither AGL specification declares operationIds, so every step in these skills is grounded on the
+  verbatim HTTP method and path from the source document rather than on an operation id.
+skills:
+- file: agl-book-a-tee-time.md
+  name: Book a golf tee time through AGL TIGER GDS
+  api: openapi/agl-ota-openapi-original.yml
+  operations: ['GET /v2/codes/countries', 'GET /v2/golfClubs', 'GET /v2/golfClub',
+    'GET /v2/teeTime/openDates', 'GET /v2/teeTime/openTeeTimes', 'POST /v2/reservation/request',
+    'POST /v2/reservation/confirm', 'GET /v2/reservation', 'POST /v2/reservation/sendVoucher']
+- file: agl-publish-supplier-tee-times.md
+  name: Publish golf club tee times to AGL as a supplier
+  api: openapi/agl-open-openapi-original.yml
+  operations: ['POST /api/golfclub', 'GET /api/golfclub/list', 'POST /api/teetime/daily',
+    'GET /api/teetime/list', 'PUT /api/teetime/availability']

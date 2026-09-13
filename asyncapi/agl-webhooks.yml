@@ -1,0 +1,56 @@
+generated: '2026-09-12'
+method: searched
+source: >-
+  https://api-docs-agl-bridgeapi.tigergds.com/reference,
+  openapi/agl-open-openapi-original.yml
+spec_type: none
+asyncapi_published: false
+summary: >-
+  AGL publishes no AsyncAPI document and no subscribe-style webhook registration surface, but it
+  does publish a real server-to-server callback contract. The AGL OPEN API is explicitly
+  bi-directional: its AGLToSupplier tag covers "APIs where AGL sends reservation and cancellation
+  requests to suppliers". Those two operations are implemented by the SUPPLIER and called by AGL,
+  which makes them the event surface of the platform - a supplier integrating with TIGER GDS must
+  stand them up and receive AGL's calls. They are documented in the same OpenAPI document as the
+  inbound operations, with the same envelope and their own authentication direction.
+delivery:
+  style: http-callback
+  direction: AGL calls the supplier
+  registration: >-
+    Not self-service. The supplier's endpoint base and its X-Client-Code are exchanged during
+    partner onboarding (https://www.tigergds.com/signup/step1, "Provider Partner"); there is no
+    endpoint-registration API and no secret-rotation operation.
+  authentication:
+    header: Authorization
+    value: Bearer <SHA-256 hashed signature>
+    identification: X-Client-Code (issued by the supplier to AGL)
+  retries: not documented
+  ordering: not documented
+  signature_verification: >-
+    The SHA-256 signature is asserted but its canonical string-to-sign is not published, so a
+    supplier cannot implement verification from the public contract alone.
+events:
+- name: reservation.request
+  operation: POST /reservation
+  summary: Reservation request
+  description: >-
+    AGL sends a booking to the supplier. Payload ReservationRequest - golfClubCode, courseCode,
+    currency, guestInfo, holderName, reservationCountry, reservationDate, reservationEmail,
+    reservationMembers, reservationPhone, reservationStartTime, totalPrice.
+  response: ReservationResponse (isSuccess, reservationId, rstCd, rstMsg, statusCode)
+  source: openapi/agl-open-openapi-original.yml#/paths/~1reservation/post
+- name: reservation.cancel
+  operation: POST /reservation/cancel
+  summary: Cancel reservation
+  description: >-
+    AGL sends a cancellation for a previously accepted reservation. Payload ReservationCancel -
+    reservationId.
+  response: CancelResponse (data, isSuccess, rstCd, rstMsg, statusCode)
+  source: openapi/agl-open-openapi-original.yml#/paths/~1reservation~1cancel/post
+event_count: 2
+gaps:
+- No AsyncAPI document, event catalogue page or event schema registry is published.
+- No callback registration, replay, dead-letter or delivery-log operation exists.
+- The signing canonicalization needed to verify an inbound AGL call is not published.
+- The OTA (distribution) side has no event surface at all - an OTA partner learns about a
+  reservation state change only by polling GET /v2/reservation.

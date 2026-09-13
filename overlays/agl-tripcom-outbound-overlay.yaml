@@ -1,0 +1,25 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for AGL Trip.com Reservation Integration API
+  version: 1.0.0
+x-generated: '2026-09-12'
+x-method: generated
+x-source: api-evangelist enrichment pipeline, derived from the harvested original spec
+extends: openapi/agl-tripcom-outbound-openapi-original.yml
+actions:
+- target: $.info
+  update:
+    x-apievangelist-slug: agl
+    x-apievangelist-provider: AGL Inc.
+    x-apievangelist-harvested-from: https://outboundapi-trip-reserv.tigergds.com/swagger/v1/swagger.json
+    x-apievangelist-harvest-date: '2026-09-12'
+    x-apievangelist-ownership: Served from outboundapi-trip-reserv.tigergds.com, a host AGL controls (tigergds.com
+      is AGL Inc.'s TIGER GDS platform). The title names Trip.com because this is AGL's outbound bridge that speaks
+      Trip.com's reservation message format; it is not Trip.com's own API.
+    x-contract-gap: The document declares no servers[] block, no operationId, no summary, no description and only
+      a 200 response.
+- target: $.servers
+  update:
+  - url: https://outboundapi-trip-reserv.tigergds.com
+    description: Host the specification is served from (observed 2026-09-12); the original document declares no
+      servers[] block.

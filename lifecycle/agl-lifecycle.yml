@@ -1,0 +1,80 @@
+generated: '2026-09-12'
+method: searched
+source: >-
+  https://api-doc.tigergds.com/reference, https://api-docs-agl-bridgeapi.tigergds.com/reference,
+  https://outboundapi-trip-reserv.tigergds.com/swagger/index.html,
+  https://www.aglgw.com/en/contents/notice, https://www.aglgw.com/en/contents/news
+versioning:
+- api: AGL OTA API
+  scheme: uri-path
+  current: v2
+  evidence: All 24 paths are prefixed /v2/; info.version is "2.0".
+- api: AGL OPEN API
+  scheme: document-version-only
+  current: 0.0.1
+  evidence: >-
+    Paths carry no version segment (/api/golfclub, /api/teetime/daily, /reservation). The only
+    version marker is info.version 0.0.1, which is a pre-1.0 designation on a contract that is
+    already in production use by suppliers.
+- api: AGL Trip.com Reservation Integration API
+  scheme: uri-path
+  current: v1
+  evidence: The single path is POST /api/v1; info.version is "1.0".
+deprecation:
+  policy_url: null
+  sunset_header: false
+  deprecated_operations: []
+  evidence: >-
+    No deprecation or sunset policy is published. No operation in any of the three specifications
+    carries deprecated: true, and no RFC 8594 Sunset or Deprecation response header is declared
+    anywhere.
+  note: >-
+    The AGL OPEN API documents a related but different constraint - a registered tee time cannot be
+    updated, only made unavailable and re-registered. That is a data-mutation rule, not an API
+    deprecation policy.
+status_page: null
+status_page_evidence: >-
+  No status.aglgw.com or status.tigergds.com host exists, and no uptime or incident page is linked
+  from either documentation site, the TIGER GDS console login or aglgw.com.
+sla:
+  url: null
+  uptime_target: null
+  note: No SLA or uptime commitment is published on any public AGL surface.
+environments:
+- name: Production (OTA)
+  host: https://gw-ota.tigergds.com
+  reachable: true
+  probed: '2026-09-12'
+- name: Action Center (OTA)
+  host: https://ac-gw-ota.tigergds.com
+  reachable: true
+  probed: '2026-09-12'
+  note: Declared in the OTA servers[] block as "Action Center Environment"; the contract does not
+    explain what the Action Center environment is for.
+- name: Production (OPEN)
+  host: https://agl-bridgeapi.tigergds.com
+  reachable: true
+  probed: '2026-09-12'
+- name: Sandbox (OPEN)
+  host: https://sandbox-agl-bridgeapi.tigergds.com
+  reachable: false
+  probed: '2026-09-12'
+  finding: >-
+    The AGL OPEN API declares this host as its "Sandbox Environment", but the name does not resolve
+    - NXDOMAIN. A supplier reading the published contract would try to integrate against a sandbox
+    that is not there. This is the single most actionable defect found in this pass.
+changelog:
+  url: null
+  in_spec_note: >-
+    The AGL OTA API info.description carries a dated inline change note - "update 2 June: added
+    static package" - which is the only version history AGL publishes anywhere. There is no
+    changelog or release-notes page.
+news:
+  url: https://www.aglgw.com/en/contents/news
+  note: >-
+    A dated company news list (2 entries as of 2026-09-12 - "The End of Search: One Conversation,
+    Any Trip with AI Tabi Golf", 2026-07-01; "AGL & Los Cabos Tourism Board Team Up to Promote
+    Premium Golf Travel", 2026-05-07). Corporate news, not API release notes.
+notice_board:
+  url: https://www.aglgw.com/en/contents/notice
+  note: Present and reachable but currently empty ("No search results were found.").
