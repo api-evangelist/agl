@@ -41,7 +41,7 @@ maintainers:
 - FN: APIs.json
   email: info@apis.io
 apis:
-- aid: agl-ota
+- aid: agl:agl-ota
   name: AGL OTA API
   description: 'Distribution-side REST API of TIGER GDS. Version 2.0, OpenAPI 3.1.1, 24 operations across
     five capability groups: reference code lookups (languages, currencies, continents, countries, regions,
@@ -65,7 +65,7 @@ apis:
   - type: APIReference
     url: https://api-doc.tigergds.com/reference
   image: https://www.aglgw.com/image/ko/img_main.png
-- aid: agl-open
+- aid: agl:agl-open
   name: AGL OPEN API
   description: 'Supplier-integration bridge API between AGL and golf-club suppliers. Version 0.0.1, OpenAPI
     3.1.1, 7 operations in two directions: Supplier to AGL (register a golf club, retrieve golf club information,
@@ -87,7 +87,7 @@ apis:
   - type: APIReference
     url: https://api-docs-agl-bridgeapi.tigergds.com/reference
   image: https://www.aglgw.com/image/ko/img_main.png
-- aid: agl-tripcom-outbound
+- aid: agl:agl-tripcom-outbound
   name: AGL Trip.com Reservation Integration API
   description: AGL-operated outbound reservation bridge that accepts Trip.com-format reservation messages.
     OpenAPI 3.0.1, a single POST /api/v1 operation carrying a signed request header (accountId, serviceName
