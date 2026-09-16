@@ -41,70 +41,166 @@ maintainers:
 - FN: APIs.json
   email: info@apis.io
 apis:
-- aid: agl:agl-ota
-  name: AGL OTA API
-  description: 'Distribution-side REST API of TIGER GDS. Version 2.0, OpenAPI 3.1.1, 24 operations across
-    five capability groups: reference code lookups (languages, currencies, continents, countries, regions,
-    cities, airports, facilities, package item codes), golf club catalog and detail, tee-time open dates
-    and open tee times, static golf packages and plan inventory, and the reservation lifecycle (request,
-    confirm, inquiry, partial cancel, cancel, voucher send). Authenticated with an Authorization header
-    token plus a clientId header issued by AGL.'
+- aid: agl:agl-agltosupplier-api
+  name: AGL AGL To Supplier API
+  description: APIs where AGL sends reservation and cancellation requests to suppliers
+  humanURL: https://api-doc.tigergds.com/reference
+  baseURL: https://gw-ota.tigergds.com
+  tags:
+  - AGLToSupplier
+  properties:
+  - type: OpenAPI
+    url: openapi/agl-agltosupplier-api-openapi.yml
+  - type: Documentation
+    url: https://api-doc.tigergds.com/reference
+  - type: APIReference
+    url: https://api-doc.tigergds.com/reference
+  - type: Documentation
+    url: https://api-docs-agl-bridgeapi.tigergds.com/reference
+  - type: APIReference
+    url: https://api-docs-agl-bridgeapi.tigergds.com/reference
+  - type: Documentation
+    url: https://outboundapi-trip-reserv.tigergds.com/swagger/index.html
+- aid: agl:agl-codes-api
+  name: AGL Codes API
+  description: The Codes API from AGL — 9 operation(s) for codes.
+  humanURL: https://api-doc.tigergds.com/reference
+  baseURL: https://gw-ota.tigergds.com
+  tags:
+  - Codes
+  properties:
+  - type: OpenAPI
+    url: openapi/agl-codes-api-openapi.yml
+  - type: Documentation
+    url: https://api-doc.tigergds.com/reference
+  - type: APIReference
+    url: https://api-doc.tigergds.com/reference
+  - type: Documentation
+    url: https://api-docs-agl-bridgeapi.tigergds.com/reference
+  - type: APIReference
+    url: https://api-docs-agl-bridgeapi.tigergds.com/reference
+  - type: Documentation
+    url: https://outboundapi-trip-reserv.tigergds.com/swagger/index.html
+- aid: agl:agl-golf-clubs-api
+  name: AGL Golf Clubs API
+  description: The Golf Clubs API from AGL — 2 operation(s) for golf clubs.
+  humanURL: https://api-doc.tigergds.com/reference
+  baseURL: https://gw-ota.tigergds.com
+  tags:
+  - Golf Clubs
+  properties:
+  - type: OpenAPI
+    url: openapi/agl-golf-clubs-api-openapi.yml
+  - type: Documentation
+    url: https://api-doc.tigergds.com/reference
+  - type: APIReference
+    url: https://api-doc.tigergds.com/reference
+  - type: Documentation
+    url: https://api-docs-agl-bridgeapi.tigergds.com/reference
+  - type: APIReference
+    url: https://api-docs-agl-bridgeapi.tigergds.com/reference
+  - type: Documentation
+    url: https://outboundapi-trip-reserv.tigergds.com/swagger/index.html
+- aid: agl:agl-reservation-api
+  name: AGL Reservation API
+  description: The Reservation API from AGL — 1 operation(s) for reservation.
+  humanURL: https://api-doc.tigergds.com/reference
+  baseURL: https://gw-ota.tigergds.com
+  tags:
+  - Reservation
+  properties:
+  - type: OpenAPI
+    url: openapi/agl-reservation-api-openapi.yml
+  - type: Documentation
+    url: https://api-doc.tigergds.com/reference
+  - type: APIReference
+    url: https://api-doc.tigergds.com/reference
+  - type: Documentation
+    url: https://api-docs-agl-bridgeapi.tigergds.com/reference
+  - type: APIReference
+    url: https://api-docs-agl-bridgeapi.tigergds.com/reference
+  - type: Documentation
+    url: https://outboundapi-trip-reserv.tigergds.com/swagger/index.html
+- aid: agl:agl-reservations-api
+  name: AGL Reservations API
+  description: The Reservations API from AGL — 6 operation(s) for reservations.
+  humanURL: https://api-doc.tigergds.com/reference
+  baseURL: https://gw-ota.tigergds.com
+  tags:
+  - Reservations
+  properties:
+  - type: OpenAPI
+    url: openapi/agl-reservations-api-openapi.yml
+  - type: Documentation
+    url: https://api-doc.tigergds.com/reference
+  - type: APIReference
+    url: https://api-doc.tigergds.com/reference
+  - type: Documentation
+    url: https://api-docs-agl-bridgeapi.tigergds.com/reference
+  - type: APIReference
+    url: https://api-docs-agl-bridgeapi.tigergds.com/reference
+  - type: Documentation
+    url: https://outboundapi-trip-reserv.tigergds.com/swagger/index.html
+- aid: agl:agl-static-packages-api
+  name: AGL Static Packages API
+  description: The Static Packages API from AGL — 2 operation(s) for static packages.
+  humanURL: https://api-doc.tigergds.com/reference
+  baseURL: https://gw-ota.tigergds.com
+  tags:
+  - Static Packages
+  properties:
+  - type: OpenAPI
+    url: openapi/agl-static-packages-api-openapi.yml
+  - type: Documentation
+    url: https://api-doc.tigergds.com/reference
+  - type: APIReference
+    url: https://api-doc.tigergds.com/reference
+  - type: Documentation
+    url: https://api-docs-agl-bridgeapi.tigergds.com/reference
+  - type: APIReference
+    url: https://api-docs-agl-bridgeapi.tigergds.com/reference
+  - type: Documentation
+    url: https://outboundapi-trip-reserv.tigergds.com/swagger/index.html
+- aid: agl:agl-suppliertoagl-api
+  name: AGL Supplier To AGL API
+  description: APIs where suppliers send data to AGL (e.g., golf club registration, tee times, etc.)
+  humanURL: https://api-doc.tigergds.com/reference
+  baseURL: https://gw-ota.tigergds.com
+  tags:
+  - SupplierToAGL
+  properties:
+  - type: OpenAPI
+    url: openapi/agl-suppliertoagl-api-openapi.yml
+  - type: Documentation
+    url: https://api-doc.tigergds.com/reference
+  - type: APIReference
+    url: https://api-doc.tigergds.com/reference
+  - type: Documentation
+    url: https://api-docs-agl-bridgeapi.tigergds.com/reference
+  - type: APIReference
+    url: https://api-docs-agl-bridgeapi.tigergds.com/reference
+  - type: Documentation
+    url: https://outboundapi-trip-reserv.tigergds.com/swagger/index.html
+- aid: agl:agl-tee-times-api
+  name: AGL Tee Times API
+  description: The Tee Times API from AGL — 2 operation(s) for tee times.
   humanURL: https://api-doc.tigergds.com/reference
   baseURL: https://gw-ota.tigergds.com
   tags:
   - Tee Times
-  - Reservations
-  - Golf
-  - Distribution
-  - Travel
   properties:
   - type: OpenAPI
-    url: openapi/agl-ota-openapi-original.yml
+    url: openapi/agl-tee-times-api-openapi.yml
   - type: Documentation
     url: https://api-doc.tigergds.com/reference
   - type: APIReference
     url: https://api-doc.tigergds.com/reference
-  image: https://www.aglgw.com/image/ko/img_main.png
-- aid: agl:agl-open
-  name: AGL OPEN API
-  description: 'Supplier-integration bridge API between AGL and golf-club suppliers. Version 0.0.1, OpenAPI
-    3.1.1, 7 operations in two directions: Supplier to AGL (register a golf club, retrieve golf club information,
-    change tee-time availability, daily tee-time registration, retrieve tee time list) and AGL to Supplier
-    (reservation request, cancel reservation). Authenticated with a bearer Authorization header carrying
-    an SHA-256 signature plus an X-Supplier-Code or X-Client-Code identification header.'
-  humanURL: https://api-docs-agl-bridgeapi.tigergds.com/reference
-  baseURL: https://agl-bridgeapi.tigergds.com
-  tags:
-  - Tee Times
-  - Suppliers
-  - Golf
-  - Integration
-  properties:
-  - type: OpenAPI
-    url: openapi/agl-open-openapi-original.yml
   - type: Documentation
     url: https://api-docs-agl-bridgeapi.tigergds.com/reference
   - type: APIReference
     url: https://api-docs-agl-bridgeapi.tigergds.com/reference
-  image: https://www.aglgw.com/image/ko/img_main.png
-- aid: agl:agl-tripcom-outbound
-  name: AGL Trip.com Reservation Integration API
-  description: AGL-operated outbound reservation bridge that accepts Trip.com-format reservation messages.
-    OpenAPI 3.0.1, a single POST /api/v1 operation carrying a signed request header (accountId, serviceName
-    enum, requestTime, version, sign) and a free-form body, secured with a JWT bearer token plus ClientId,
-    Currency and Language headers.
-  humanURL: https://outboundapi-trip-reserv.tigergds.com/swagger/index.html
-  baseURL: https://outboundapi-trip-reserv.tigergds.com
-  tags:
-  - Reservations
-  - Travel
-  - Integration
-  properties:
-  - type: OpenAPI
-    url: openapi/agl-tripcom-outbound-openapi-original.yml
   - type: Documentation
     url: https://outboundapi-trip-reserv.tigergds.com/swagger/index.html
-  image: https://www.aglgw.com/image/ko/img_main.png
 common:
 - type: AgenticAccess
   url: agentic-access/agl-agentic-access.yml
