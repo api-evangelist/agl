@@ -22,6 +22,9 @@ x-source:
 specificationVersion: '0.20'
 created: '2026-09-12'
 modified: '2026-09-12'
+x-docs-platform: scalar
+x-docs-platform-confidence: high
+x-docs-platform-checked: 2026-09-17
 tags:
 - Company
 - Golf
