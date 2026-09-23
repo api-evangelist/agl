@@ -1,0 +1,214 @@
+openapi: 3.2.0
+info:
+  description: This OpenAPI document defines the full set of interfaces used for integration between AGL and its suppliers.
+  title: AGL OPEN AGL To Supplier API
+  version: 0.0.1
+servers:
+- description: Sandbox Environment
+  url: https://sandbox-agl-bridgeapi.tigergds.com
+- description: Production Environment
+  url: https://agl-bridgeapi.tigergds.com
+security:
+- bearerAuth: []
+tags:
+- description: APIs where AGL sends reservation and cancellation requests to suppliers
+  name: AGLToSupplier
+paths:
+  /reservation:
+    post:
+      description: AGL requests a reservation confirmation to the supplier. A successful call confirms the reservation.
+      parameters:
+      - $ref: '#/components/parameters/X-Client-Code'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReservationRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReservationResponse'
+          description: Reservation success
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FailResponse'
+          description: Invalid input
+      summary: Reservation request
+      tags:
+      - AGLToSupplier
+      operationId: postReservation
+      x-operation-id-source: derived
+  /reservation/cancel:
+    post:
+      description: AGL cancels a previously made reservation by sending the reservation ID.
+      parameters:
+      - $ref: '#/components/parameters/X-Client-Code'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReservationCancel'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CancelResponse'
+          description: Reservation cancelled
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FailResponse'
+          description: Invalid input
+      summary: Cancel reservation
+      tags:
+      - AGLToSupplier
+      operationId: postReservationCancel
+      x-operation-id-source: derived
+components:
+  schemas:
+    FailResponse:
+      properties:
+        isSuccess:
+          type: boolean
+          examples:
+          - false
+        rstCd:
+          type: string
+          examples:
+          - INVALID_INPUT
+        rstMsg:
+          type: string
+          examples:
+          - Invalid input parameters
+        statusCode:
+          type: integer
+          examples:
+          - 400
+      required:
+      - isSuccess
+      - rstCd
+      - rstMsg
+      - statusCode
+      type: object
+    ReservationResponse:
+      properties:
+        isSuccess:
+          type: boolean
+        reservationId:
+          type: string
+        rstCd:
+          type: string
+        rstMsg:
+          type: string
+        statusCode:
+          type: integer
+      required:
+      - isSuccess
+      - rstCd
+      - rstMsg
+      - statusCode
+      - reservationId
+      type: object
+    ReservationRequest:
+      properties:
+        courseCode:
+          type: string
+        currency:
+          type: string
+        golfClubCode:
+          type: string
+        guestInfo:
+          items:
+            properties:
+              guestCountry:
+                type: string
+              guestGender:
+                type: string
+              guestName:
+                type: string
+              guestPhone:
+                type: string
+            type: object
+          type: array
+        holderName:
+          type: string
+        reservationCountry:
+          type: string
+        reservationDate:
+          type: string
+        reservationEmail:
+          type: string
+        reservationMembers:
+          type: integer
+        reservationPhone:
+          type: string
+        reservationStartTime:
+          type: string
+        totalPrice:
+          type: number
+      required:
+      - golfClubCode
+      - courseCode
+      - reservationDate
+      - reservationStartTime
+      - reservationMembers
+      - currency
+      - totalPrice
+      - holderName
+      - reservationPhone
+      - reservationEmail
+      - reservationCountry
+      type: object
+    CancelResponse:
+      properties:
+        data:
+          properties:
+            cancelDate:
+              type: string
+            cancelPenaltyAmount:
+              type: integer
+            currency:
+              type: string
+          type: object
+        isSuccess:
+          type: boolean
+        rstCd:
+          type: string
+        rstMsg:
+          type: string
+        statusCode:
+          type: integer
+      required:
+      - isSuccess
+      - rstCd
+      - rstMsg
+      - statusCode
+      type: object
+    ReservationCancel:
+      properties:
+        reservationId:
+          type: string
+      required:
+      - reservationId
+      type: object
+  parameters:
+    X-Client-Code:
+      description: Client code issued by supplier (required for AGLToSupplier APIs)
+      in: header
+      name: X-Client-Code
+      required: true
+      schema:
+        type: string
+  securitySchemes:
+    bearerAuth:
+      bearerFormat: SHA-256
+      scheme: bearer
+      type: http

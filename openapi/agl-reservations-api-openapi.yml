@@ -1,0 +1,798 @@
+openapi: 3.2.0
+info:
+  title: AGL OTA Reservations API
+  version: '2.0'
+  description: 'AGL OTA API provides RESTful access to golf-related data and operations, including
+
+    code lookup, golf club information, tee time availability, and reservation management.
+
+    update 2 June: added static package'
+servers:
+- url: https://ac-gw-ota.tigergds.com
+  description: Action Center Environment
+- url: https://gw-ota.tigergds.com
+  description: Production Environment
+security:
+- bearerAuth: []
+  clientId: []
+tags:
+- name: Reservations
+paths:
+  /v2/reservation/request:
+    post:
+      summary: Make a reservation request.
+      description: Only one reservation request can be made at a time. If there is an existing integrated reservation number, include it in the reservationNumber field when making the request.
+      tags:
+      - Reservations
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reservationNumber:
+                  type: string
+                  description: Integrated reservation number. If not provided, a new reservation will be created.
+                reference:
+                  type: string
+                  description: Reference number for the check reservation, such as ota booking reference number.
+                reservations:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/ReservationRequest'
+                  maxItems: 1
+                  minItems: 1
+      responses:
+        '200':
+          description: Reservation request result,
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/CommonResponse'
+                - type: object
+                  properties:
+                    data:
+                      type: object
+                      properties:
+                        reservationId:
+                          type: string
+                        reservationNumber:
+                          type: string
+                          description: Integrated reservation number
+                        cancellationPolicy:
+                          $ref: '#/components/schemas/CancellationPolicy'
+      operationId: postV2ReservationRequest
+      x-operation-id-source: derived
+    delete:
+      summary: Cancel a single reservation request
+      description: Cancels one reservation request identified by reservationId. Use this endpoint to revoke a specific request only. It affects only the targeted request, even if it belongs to a group that shares the same integrated reservation number.
+      tags:
+      - Reservations
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - reservationId
+              properties:
+                reservationId:
+                  type: string
+      responses:
+        '200':
+          description: cancelled reservation request.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/CommonResponse'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/Reservation'
+      operationId: deleteV2ReservationRequest
+      x-operation-id-source: derived
+  /v2/reservation/requests:
+    delete:
+      summary: Cancel reservation requests by integrated reservation number
+      description: Cancels all reservation requests associated with the provided reservationNumber (integrated reservation number). Use this endpoint to invalidate every request created under the same integrated reservation number in a single operation.
+      tags:
+      - Reservations
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - reservationNumber
+              properties:
+                reservationNumber:
+                  type: string
+      responses:
+        '200':
+          description: cancelled reservation request.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/CommonResponse'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/Reservation'
+      operationId: deleteV2ReservationRequests
+      x-operation-id-source: derived
+  /v2/reservation/confirm:
+    post:
+      summary: Confirm reservation
+      tags:
+      - Reservations
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - reservationNumber
+              - payment
+              properties:
+                reservationNumber:
+                  type: string
+                payment:
+                  $ref: '#/components/schemas/ConfirmRequest'
+      responses:
+        '200':
+          description: Reservation coinfirm result,
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/CommonResponse'
+                - type: object
+                  properties:
+                    data:
+                      type: object
+                      properties:
+                        paymentId:
+                          type: string
+                          examples:
+                          - 00264e5043674c198dc9ddcb410d6454
+                        reservationNumber:
+                          type: string
+                          examples:
+                          - 25556D5FB8
+      operationId: postV2ReservationConfirm
+      x-operation-id-source: derived
+  /v2/reservation/partialcancel:
+    post:
+      summary: Cancel a reservation partially
+      tags:
+      - Reservations
+      parameters:
+      - name: reservationId
+        in: query
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: cancelled reservation.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/CommonResponse'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/Reservation'
+      operationId: postV2ReservationPartialcancel
+      x-operation-id-source: derived
+  /v2/reservation:
+    get:
+      summary: Inquiry reservation details
+      tags:
+      - Reservations
+      parameters:
+      - name: reservationNumber
+        in: query
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: cancelled reservation.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/CommonResponse'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/Reservation'
+      operationId: getV2Reservation
+      x-operation-id-source: derived
+    delete:
+      summary: Cancel a reservation
+      tags:
+      - Reservations
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - reservationNumber
+              properties:
+                reservationNumber:
+                  type: string
+      responses:
+        '200':
+          description: cancelled reservation.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/CommonResponse'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/Reservation'
+      operationId: deleteV2Reservation
+      x-operation-id-source: derived
+  /v2/reservation/sendVoucher:
+    post:
+      summary: Send reservation voucher
+      tags:
+      - Reservations
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - reservationNumber
+              properties:
+                reservationNumber:
+                  type: string
+      responses:
+        '200':
+          description: no data returned for this request.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/CommonResponse'
+      operationId: postV2ReservationSendVoucher
+      x-operation-id-source: derived
+components:
+  schemas:
+    TeeBookerRequest:
+      required:
+      - booker
+      type: object
+      properties:
+        booker:
+          type: object
+          required:
+          - firstName
+          - lastName
+          - phone
+          - email
+          - countGolfers
+          properties:
+            nationality:
+              type: string
+            firstName:
+              type: string
+            lastName:
+              type: string
+            phone:
+              type: string
+            email:
+              type: string
+            countGolfers:
+              $ref: '#/components/schemas/AcceptedGroupSize'
+    TeeGolfers:
+      type: object
+      properties:
+        golfers:
+          type: array
+          description: list of golfers that are playing in this tee time.
+          minItems: 1
+          maxItems: 4
+          items:
+            type: object
+            properties:
+              firstName:
+                type: string
+                description: first name of the golfer
+                examples:
+                - John
+              lastName:
+                type: string
+                description: last name of the golfer
+                examples:
+                - Doe
+              gender:
+                type: string
+                enum:
+                - M
+                - F
+    TeeTime:
+      type: object
+      properties:
+        id:
+          type: string
+          description: id of the teeTime.
+        teeDate:
+          type: string
+          description: ISO format date of this teetime's date
+          examples:
+          - '2025-01-01'
+        teeTimeAt:
+          type: string
+          description: ISO format time of this teetime's time
+          examples:
+          - 08:00
+        teeTimeAtObject:
+          type: object
+          properties:
+            year:
+              type: number
+              examples:
+              - 2025
+            month:
+              type: number
+              examples:
+              - 1
+            date:
+              type: number
+              examples:
+              - 1
+            hour:
+              type: number
+              examples:
+              - 8
+            minute:
+              type: number
+              examples:
+              - 0
+    Amount:
+      type: object
+      properties:
+        reservationId:
+          type: string
+          description: id of the reservation that this amount is associated with. Required for tee time reservations.
+        currency:
+          type: string
+          examples:
+          - USD
+        amountType:
+          $ref: '#/components/schemas/AmountType'
+          examples:
+          - teeTimeAmount or teeTimeSumAmount or staticPackageAmount or staticPackageTotalAmount
+        amount:
+          type: number
+          format: decimal
+          examples:
+          - 156
+        amountCents:
+          type: number
+          description: 100x of the amount, to represent cents properly
+          examples:
+          - 15600
+        status:
+          enum:
+          - CHARGED
+          - VOIDED
+          nullable: true
+    Reservation:
+      type: object
+      properties:
+        reservationNumber:
+          type: string
+        reference:
+          type: string
+        payment:
+          $ref: '#/components/schemas/Payment'
+        charge:
+          $ref: '#/components/schemas/Payment'
+        reservations:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              reference:
+                type: string
+              reservationNumber:
+                type: string
+              status:
+                type: string
+                enum:
+                - REQUESTED
+                - ACTIVE
+                - USED
+                - CANCELLED
+              reservationType:
+                type: string
+                enum:
+                - TEE_TIME
+                - PACKAGE
+                - STATIC_PACKAGE
+              golfClubIds:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    golfClubId:
+                      type: string
+                    courseId:
+                      type: string
+              teeTime:
+                allOf:
+                - $ref: '#/components/schemas/TeeTime'
+                - $ref: '#/components/schemas/TeeBooker'
+                - $ref: '#/components/schemas/FlightInfo'
+                - $ref: '#/components/schemas/TeeGolfers'
+              staticPackage:
+                allOf:
+                - type: object
+                  properties:
+                    id:
+                      type: string
+                      description: id of the static package associated with this reservation. Required for static package reservations.
+                    planId:
+                      type: string
+                      description: id of the static package plan associated with this reservation. Required for static package reservations.
+                - $ref: '#/components/schemas/TeeBooker'
+                - $ref: '#/components/schemas/FlightInfo'
+                - $ref: '#/components/schemas/TeeGolfers'
+              cancellationPolicy:
+                $ref: '#/components/schemas/CancellationPolicy'
+    ConfirmRequest:
+      type: object
+      required:
+      - currency
+      - totalAmount
+      - amountLines
+      - email
+      - paymentMethod
+      properties:
+        currency:
+          type: string
+        totalAmount:
+          type: number
+          format: decimal
+          examples:
+          - 156
+        amountLines:
+          type: array
+          items:
+            $ref: '#/components/schemas/AmountRequest'
+        mobile:
+          type: string
+        email:
+          type: string
+        paymentMethod:
+          type: string
+          enum:
+          - CARD_STRIPE
+          - CARD_EXIMPAY
+          - CARD
+          - CASH
+          - AFT
+          description: 'AFT : postpaid'
+    FlightInfo:
+      type: object
+      properties:
+        flight:
+          type: object
+          properties:
+            inboundFlightNumber:
+              type: string
+              description: flight number of the inboound flight
+              examples:
+              - KE001
+            inboundDepartureDate:
+              type: string
+              description: ISO format date of the departure date of the inbound flight
+              examples:
+              - '2025-01-01'
+            inboundDepartureTime:
+              type: string
+              description: ISO format time of the departure time of the inbound flight
+              examples:
+              - 08:00
+            inboundDepartureAirportCode:
+              type: string
+              description: airport code of the inbound flight departure airport
+              examples:
+              - ICN
+            inboundArrivalDate:
+              type: string
+              description: ISO format date of the arrival date of the inbound flight
+              examples:
+              - '2025-01-01'
+            inboundArrivalTime:
+              type: string
+              description: ISO format time of the arrival time of the inbound flight
+              examples:
+              - '13:00'
+            inboundArrivalAirportCode:
+              type: string
+              description: airport code of the inbound flight arrival airport
+              examples:
+              - PUS
+            outboundFlightNumber:
+              type: string
+              description: flight number of the outbound flight
+              examples:
+              - KE002
+            outboundDepartureDate:
+              type: string
+              description: ISO format date of the departure date of the outbound flight
+              examples:
+              - '2025-01-03'
+            outboundDepartureTime:
+              type: string
+              description: ISO format time of the departure time of the outbound flight
+              examples:
+              - '21:00'
+            outboundDepartureAirportCode:
+              type: string
+              description: airport code of the outbound flight departure airport
+              examples:
+              - PUS
+            outboundArrivalDate:
+              type: string
+              description: ISO format date of the arrival date of the outbound flight
+              examples:
+              - '2025-01-01'
+            outboundArrivalTime:
+              type: string
+              description: ISO format time of the arrival time of the outbound flight
+              examples:
+              - '24:00'
+            outboundArrivalAirportCode:
+              type: string
+              description: airport code of the outbound flight arrival airport
+              examples:
+              - ICN
+            memo:
+              type: string
+              description: memo for the flight
+    TeeGolfersRequest:
+      type: object
+      required:
+      - golfers
+      properties:
+        golfers:
+          type: array
+          description: list of golfers that are playing in this tee time.
+          minItems: 1
+          maxItems: 4
+          items:
+            type: object
+            required:
+            - firstName
+            - lastName
+            properties:
+              firstName:
+                type: string
+                description: first name of the golfer
+                examples:
+                - John
+              lastName:
+                type: string
+                description: last name of the golfer
+                examples:
+                - Doe
+              gender:
+                type: string
+                enum:
+                - M
+                - F
+    AmountRequest:
+      type: object
+      required:
+      - currency
+      - amountType
+      - amount
+      - amountCents
+      - status
+      properties:
+        reservationId:
+          type: string
+          description: id of the reservation that this amount is associated with. Required for static package reservations.
+        currency:
+          type: string
+        amountType:
+          $ref: '#/components/schemas/AmountType'
+          examples:
+          - teeTimeAmount or teeTimeSumAmount or staticPackageAmount or staticPackageTotalAmount
+        amount:
+          type: number
+          format: decimal
+          examples:
+          - 156
+        amountCents:
+          type: number
+          description: 100x of the amount, to represent cents properly
+          examples:
+          - 15600
+        status:
+          enum:
+          - CHARGED
+          - VOIDED
+    ReservationRequest:
+      type: object
+      required:
+      - reservationType
+      properties:
+        reference:
+          type: string
+          description: Reference number for the check reservation, such as ota booking reference number.
+        reservationType:
+          type: string
+          enum:
+          - TEE_TIME
+          - PACKAGE
+          - STATIC_PACKAGE
+          description: Type of the reservation. TEE_TIME for tee time reservation, PACKAGE for package reservation, and STATIC_PACKAGE for static package reservation.
+        teeTime:
+          description: Tee time reservation information. Required for tee time reservations when reservationType is TEE_TIME.
+          allOf:
+          - type: object
+            properties:
+              id:
+                type: string
+                description: id of the tee time associated with this reservation. Required for tee time reservations when reservationType is TEE_TIME.
+            required:
+            - id
+          - $ref: '#/components/schemas/TeeBookerRequest'
+          - $ref: '#/components/schemas/FlightInfo'
+          - $ref: '#/components/schemas/TeeGolfersRequest'
+        staticPackage:
+          allOf:
+          - type: object
+            required:
+            - id
+            - planId
+            properties:
+              id:
+                type: string
+                description: id of the static package associated with this reservation. Required for static package reservations when reservationType is STATIC_PACKAGE.
+              planId:
+                type: string
+                description: id of the static package plan associated with this reservation. Required for static package reservations when reservationType is STATIC_PACKAGE.
+          - $ref: '#/components/schemas/TeeBookerRequest'
+          - $ref: '#/components/schemas/FlightInfo'
+          - $ref: '#/components/schemas/TeeGolfersRequest'
+          description: Static package reservation information. Required for static package reservations when reservationType is STATIC_PACKAGE.
+    CancellationPolicy:
+      type: object
+      properties:
+        currency:
+          type: string
+        policies:
+          type: array
+          items:
+            type: object
+            properties:
+              amountType:
+                $ref: '#/components/schemas/AmountType'
+                examples:
+                - cancellationFee or cancellationFeePerc
+              amount:
+                type: number
+                format: decimal
+                description: Percentage of the cancellation fee or cancellation fee applied after a specific date and time
+                examples:
+                - 50
+              appliesUntil:
+                type: string
+                description: ISO format UTC date time that this cancellation policy applies
+                examples:
+                - 2025-02-22 11:00
+          examples:
+          - - amountType: cancellationFeePerc
+              amount: 50
+              appliesUntil: 2025-02-22 11:00
+            - amountType: cancellationFeePerc
+              amount: 100
+              appliesUntil: 2025-02-30 11:00
+    Payment:
+      type: object
+      properties:
+        id:
+          type: string
+        currency:
+          type: string
+        totalAmount:
+          type: number
+          format: decimal
+          examples:
+          - 156
+        amountLines:
+          type: array
+          items:
+            $ref: '#/components/schemas/Amount'
+        mobile:
+          type: string
+        email:
+          type: string
+        paymentMethod:
+          type: string
+          enum:
+          - CARD_STRIPE
+          - CARD_EXIMPAY
+          - CARD
+          - CASH
+          - AFT
+          description: 'AFT : postpaid'
+    TeeBooker:
+      type: object
+      properties:
+        booker:
+          type: object
+          properties:
+            nationality:
+              type: string
+            firstName:
+              type: string
+            lastName:
+              type: string
+            phone:
+              type: string
+            email:
+              type: string
+            countGolfers:
+              $ref: '#/components/schemas/AcceptedGroupSize'
+    AmountType:
+      type: string
+      enum:
+      - teeTimeAmount
+      - teeTimeSumAmount
+      - staticPackageAmount
+      - staticPackageTotalAmount
+      - cancellationFee
+      - cancellationFeePerc
+      description: type of the amount line. Used to identify the type of amount.
+    AcceptedGroupSize:
+      type: number
+      enum:
+      - 1
+      - 2
+      - 3
+      - 4
+      - 5
+    CommonResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+          - ok
+          - fail
+        data:
+          type:
+          - object
+          - 'null'
+          description: Payload of the response
+  securitySchemes:
+    bearerAuth:
+      type: apiKey
+      name: Authorization
+      in: header
+    clientId:
+      type: apiKey
+      in: header
+      name: clientId

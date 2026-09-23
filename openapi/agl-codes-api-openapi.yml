@@ -1,0 +1,372 @@
+openapi: 3.2.0
+info:
+  title: AGL OTA Codes API
+  version: '2.0'
+  description: 'AGL OTA API provides RESTful access to golf-related data and operations, including
+
+    code lookup, golf club information, tee time availability, and reservation management.
+
+    update 2 June: added static package'
+servers:
+- url: https://ac-gw-ota.tigergds.com
+  description: Action Center Environment
+- url: https://gw-ota.tigergds.com
+  description: Production Environment
+security:
+- bearerAuth: []
+  clientId: []
+tags:
+- name: Codes
+paths:
+  /v2/codes/languages:
+    get:
+      summary: Get supported language codes
+      description: list of supported language codes
+      tags:
+      - Codes
+      responses:
+        '200':
+          description: list of supported language 2-lettered codes.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/CommonResponse'
+                - type: object
+                  properties:
+                    data:
+                      type: object
+                      properties:
+                        languages:
+                          type: array
+                          items:
+                            enum:
+                            - ko
+                            - en
+                            - ja
+                            - es
+                            - zh
+                            - tw
+      operationId: getV2CodesLanguages
+      x-operation-id-source: derived
+  /v2/codes/currencies:
+    get:
+      summary: Get supported currency codes
+      description: list of supported currencies
+      tags:
+      - Codes
+      responses:
+        '200':
+          description: list of supported currency 3-lettered codes.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/CommonResponse'
+                - type: object
+                  properties:
+                    data:
+                      type: object
+                      properties:
+                        currencies:
+                          type: array
+                          items:
+                            enum:
+                            - KRW
+                            - USD
+                            - GBP
+                            - EUR
+                            - JPY
+                            - SGD
+                            - TWD
+      operationId: getV2CodesCurrencies
+      x-operation-id-source: derived
+  /v2/codes/continents:
+    get:
+      summary: Get continent codes
+      tags:
+      - Codes
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/CommonResponse'
+                - type: object
+                  properties:
+                    data:
+                      type: object
+                      properties:
+                        continents:
+                          type: array
+                          items:
+                            $ref: '#/components/schemas/Continent'
+      operationId: getV2CodesContinents
+      x-operation-id-source: derived
+  /v2/codes/countries:
+    get:
+      summary: Get country codes by continent
+      tags:
+      - Codes
+      parameters:
+      - name: continentCodes
+        in: query
+        schema:
+          type: string
+        description: continentCode to query. If wish to query multiple, then can use comma to list values.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/CommonResponse'
+                - type: object
+                  properties:
+                    data:
+                      type: object
+                      properties:
+                        countries:
+                          type: array
+                          items:
+                            $ref: '#/components/schemas/Country'
+      operationId: getV2CodesCountries
+      x-operation-id-source: derived
+  /v2/codes/regions:
+    get:
+      summary: Get region codes by country
+      tags:
+      - Codes
+      parameters:
+      - name: countryCodes
+        in: query
+        schema:
+          type: string
+        description: countryCode to query. If wish to query multiple, then can use comma to list values.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/CommonResponse'
+                - type: object
+                  properties:
+                    data:
+                      type: object
+                      properties:
+                        countries:
+                          type: array
+                          items:
+                            $ref: '#/components/schemas/Region'
+      operationId: getV2CodesRegions
+      x-operation-id-source: derived
+  /v2/codes/cities:
+    get:
+      summary: Get city codes by country
+      tags:
+      - Codes
+      parameters:
+      - name: countryCodes
+        in: query
+        schema:
+          type: string
+        description: countryCode to query. If wish to query multiple, then can use comma to list values.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/CommonResponse'
+                - type: object
+                  properties:
+                    data:
+                      type: object
+                      properties:
+                        cities:
+                          type: array
+                          items:
+                            $ref: '#/components/schemas/City'
+      operationId: getV2CodesCities
+      x-operation-id-source: derived
+  /v2/codes/airports:
+    get:
+      summary: Get airport codes
+      description: list of supported airport codes
+      tags:
+      - Codes
+      responses:
+        '200':
+          description: list of supported currency 3-lettered codes.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/CommonResponse'
+                - type: object
+                  properties:
+                    data:
+                      type: object
+                      properties:
+                        airports:
+                          type: array
+                          items:
+                            $ref: '#/components/schemas/Airport'
+      operationId: getV2CodesAirports
+      x-operation-id-source: derived
+  /v2/codes/facilities:
+    get:
+      summary: Get facilities codes
+      description: list of all facilities that a golf club may have
+      tags:
+      - Codes
+      responses:
+        '200':
+          description: list of all facilities that a golf club may have
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/CommonResponse'
+                - type: object
+                  properties:
+                    data:
+                      type: object
+                      properties:
+                        facilities:
+                          type: array
+                          items:
+                            $ref: '#/components/schemas/GolfClubFacility'
+      operationId: getV2CodesFacilities
+      x-operation-id-source: derived
+  /v2/codes/packageItemCodes:
+    get:
+      summary: get list of possible package item codes such as accommodation, breakfast…
+      tags:
+      - Codes
+      responses:
+        '200':
+          description: list of packageItems that can be included in packageItems
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/CommonResponse'
+                - type: object
+                  properties:
+                    data:
+                      type: object
+                      properties:
+                        packageItemCodes:
+                          type: array
+                          items:
+                            type: string
+                            enum:
+                            - flights
+                            - accomodation
+                            - transportation
+                            - golfCart
+                            - caddie
+                            - breakfast
+                            - lunch
+                            - dinner
+      operationId: getV2CodesPackageItemCodes
+      x-operation-id-source: derived
+components:
+  schemas:
+    City:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          $ref: '#/components/schemas/MultiLanguageText'
+        countryId:
+          type: string
+    Region:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          $ref: '#/components/schemas/MultiLanguageText'
+        countryId:
+          type: string
+    MultiLanguageText:
+      type: object
+      properties:
+        en:
+          type: string
+        ko:
+          type: string
+        ja:
+          type: string
+        zh:
+          type: string
+        tw:
+          type: string
+        es:
+          type: string
+    Continent:
+      type: object
+      properties:
+        id:
+          type: string
+          description: string that identifies a continent
+          examples:
+          - Asia
+        name:
+          $ref: '#/components/schemas/MultiLanguageText'
+    Airport:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          $ref: '#/components/schemas/MultiLanguageText'
+    Country:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          $ref: '#/components/schemas/MultiLanguageText'
+        continentId:
+          type: string
+    GolfClubFacility:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          $ref: '#/components/schemas/MultiLanguageText'
+        exists:
+          type: boolean
+    CommonResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+          - ok
+          - fail
+        data:
+          type:
+          - object
+          - 'null'
+          description: Payload of the response
+  securitySchemes:
+    bearerAuth:
+      type: apiKey
+      name: Authorization
+      in: header
+    clientId:
+      type: apiKey
+      in: header
+      name: clientId

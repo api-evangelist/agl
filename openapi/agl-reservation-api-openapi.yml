@@ -1,7 +1,14 @@
-openapi: 3.0.1
+openapi: 3.2.0
 info:
-  title: Trip.com reservation integreated Api v1.0
+  title: Trip.com integreated Api v1.0 Reservation API
   version: '1.0'
+security:
+- Bearer: []
+  ClientId: []
+  Currency: []
+  Language: []
+tags:
+- name: Reservation
 paths:
   /api/v1:
     post:
@@ -24,19 +31,12 @@ paths:
       responses:
         '200':
           description: OK
+      summary: Create api
+      x-summary-source: derived
+      operationId: postApiV1
+      x-operation-id-source: derived
 components:
   schemas:
-    JObjectTripComRequestDto:
-      type: object
-      properties:
-        header:
-          $ref: '#/components/schemas/TripComRequestHeader'
-        body:
-          type: object
-          additionalProperties:
-            $ref: '#/components/schemas/JToken'
-          nullable: true
-      additionalProperties: false
     JToken:
       type: array
       items:
@@ -77,6 +77,18 @@ components:
           minLength: 1
           type: string
       additionalProperties: false
+    JObjectTripComRequestDto:
+      type: object
+      properties:
+        header:
+          $ref: '#/components/schemas/TripComRequestHeader'
+        body:
+          type:
+          - object
+          - 'null'
+          additionalProperties:
+            $ref: '#/components/schemas/JToken'
+      additionalProperties: false
   securitySchemes:
     Bearer:
       type: http
@@ -94,8 +106,3 @@ components:
       type: apiKey
       name: Language
       in: header
-security:
-- Bearer: []
-  ClientId: []
-  Currency: []
-  Language: []

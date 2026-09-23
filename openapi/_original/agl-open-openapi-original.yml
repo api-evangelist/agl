@@ -1,3 +1,5 @@
+# x-archived-from: agl-open-openapi-original.yml
+# x-archived-on: 2026-09-16
 components:
   parameters:
     X-Client-Code:

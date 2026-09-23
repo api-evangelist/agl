@@ -1,0 +1,311 @@
+openapi: 3.2.0
+info:
+  title: AGL OTA Tee Times API
+  version: '2.0'
+  description: 'AGL OTA API provides RESTful access to golf-related data and operations, including
+
+    code lookup, golf club information, tee time availability, and reservation management.
+
+    update 2 June: added static package'
+servers:
+- url: https://ac-gw-ota.tigergds.com
+  description: Action Center Environment
+- url: https://gw-ota.tigergds.com
+  description: Production Environment
+security:
+- bearerAuth: []
+  clientId: []
+tags:
+- name: Tee Times
+paths:
+  /v2/teeTime/openDates:
+    get:
+      summary: Get available tee time dates
+      tags:
+      - Tee Times
+      parameters:
+      - name: golfClubId
+        in: query
+        schema:
+          type: string
+        required: true
+        examples:
+          default:
+            value: ABC123
+      - name: fromDate
+        in: query
+        required: true
+        schema:
+          type: string
+        description: ISO formatted date
+        examples:
+          default:
+            value: '2025-01-01'
+      - name: toDate
+        in: query
+        required: true
+        schema:
+          type: string
+        description: ISO formatted date
+        examples:
+          default:
+            value: '2025-01-01'
+      responses:
+        '200':
+          description: list of open dates that a golf club have, within dates provided. window may not exceed 1 year.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/CommonResponse'
+                - type: object
+                  properties:
+                    data:
+                      type: object
+                      properties:
+                        openDates:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              openDate:
+                                type: string
+                                format: ISO-formatted date yyyy-MM-dd
+                                examples:
+                                - '2025-01-01'
+                              openDateObject:
+                                type: object
+                                properties:
+                                  year:
+                                    type: number
+                                    examples:
+                                    - 2025
+                                  month:
+                                    type: number
+                                    examples:
+                                    - 1
+                                  date:
+                                    type: number
+                                    examples:
+                                    - 1
+      operationId: getV2TeeTimeOpenDates
+      x-operation-id-source: derived
+  /v2/teeTime/openTeeTimes:
+    get:
+      summary: Get detailed tee times by golf club and date
+      tags:
+      - Tee Times
+      parameters:
+      - name: golfClubId
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: openDate
+        in: query
+        required: true
+        schema:
+          type: string
+          format: ISO-formatted date
+      - $ref: '#/components/parameters/LanguageParam'
+      - $ref: '#/components/parameters/CurrencyParam'
+      responses:
+        '200':
+          description: Available courses and tee times for the specified date.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/CommonResponse'
+                - type: object
+                  properties:
+                    data:
+                      type: object
+                      properties:
+                        courses:
+                          type: array
+                          items:
+                            $ref: '#/components/schemas/Course'
+      operationId: getV2TeeTimeOpenTeeTimes
+      x-operation-id-source: derived
+components:
+  schemas:
+    TeeTime:
+      type: object
+      properties:
+        id:
+          type: string
+          description: id of the teeTime.
+        teeDate:
+          type: string
+          description: ISO format date of this teetime's date
+          examples:
+          - '2025-01-01'
+        teeTimeAt:
+          type: string
+          description: ISO format time of this teetime's time
+          examples:
+          - 08:00
+        teeTimeAtObject:
+          type: object
+          properties:
+            year:
+              type: number
+              examples:
+              - 2025
+            month:
+              type: number
+              examples:
+              - 1
+            date:
+              type: number
+              examples:
+              - 1
+            hour:
+              type: number
+              examples:
+              - 8
+            minute:
+              type: number
+              examples:
+              - 0
+    TeetimeAmount:
+      type: object
+      properties:
+        currency:
+          type: string
+          examples:
+          - USD
+        amountType:
+          $ref: '#/components/schemas/AmountType'
+          examples:
+          - teeTimeAmount or teeTimeSumAmount or staticPackageAmount or staticPackageTotalAmount
+        amount:
+          type: number
+          format: decimal
+          examples:
+          - 156
+        amountCents:
+          type: number
+          description: 100x of the amount, to represent cents properly
+          examples:
+          - 15600
+    MultiLanguageText:
+      type: object
+      properties:
+        en:
+          type: string
+        ko:
+          type: string
+        ja:
+          type: string
+        zh:
+          type: string
+        tw:
+          type: string
+        es:
+          type: string
+    AmountType:
+      type: string
+      enum:
+      - teeTimeAmount
+      - teeTimeSumAmount
+      - staticPackageAmount
+      - staticPackageTotalAmount
+      - cancellationFee
+      - cancellationFeePerc
+      description: type of the amount line. Used to identify the type of amount.
+    AcceptedGroupSize:
+      type: number
+      enum:
+      - 1
+      - 2
+      - 3
+      - 4
+      - 5
+    TeeTimeWithAmount:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/TeeTime'
+      - type: object
+        properties:
+          confirmationType:
+            type: string
+            enum:
+            - immediate
+            - manual_confirmation
+          acceptedGroupSizes:
+            type: array
+            description: number of guests that the golf resort would accept for each tee time
+            items:
+              $ref: '#/components/schemas/AcceptedGroupSize'
+            examples:
+            - - 4
+          amounts:
+            type: array
+            items:
+              type: object
+              properties:
+                groupSize:
+                  type: number
+                  examples:
+                  - 4
+                amount:
+                  $ref: '#/components/schemas/TeetimeAmount'
+    Course:
+      type: object
+      properties:
+        id:
+          type: string
+          examples:
+          - d229f6afc72e4533ba55a4ee89b0355a
+        name:
+          $ref: '#/components/schemas/MultiLanguageText'
+        teeTimes:
+          type: array
+          items:
+            $ref: '#/components/schemas/TeeTimeWithAmount'
+    CommonResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+          - ok
+          - fail
+        data:
+          type:
+          - object
+          - 'null'
+          description: Payload of the response
+  parameters:
+    LanguageParam:
+      name: language
+      in: query
+      required: true
+      schema:
+        type: string
+        enum:
+        - ko
+        - en
+        - ja
+        - es
+        - zh
+        - tw
+    CurrencyParam:
+      name: currency
+      in: query
+      required: true
+      schema:
+        type: string
+        examples:
+        - KRW
+  securitySchemes:
+    bearerAuth:
+      type: apiKey
+      name: Authorization
+      in: header
+    clientId:
+      type: apiKey
+      in: header
+      name: clientId

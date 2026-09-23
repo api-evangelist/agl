@@ -1,0 +1,336 @@
+openapi: 3.2.0
+info:
+  title: AGL OTA Golf Clubs API
+  version: '2.0'
+  description: 'AGL OTA API provides RESTful access to golf-related data and operations, including
+
+    code lookup, golf club information, tee time availability, and reservation management.
+
+    update 2 June: added static package'
+servers:
+- url: https://ac-gw-ota.tigergds.com
+  description: Action Center Environment
+- url: https://gw-ota.tigergds.com
+  description: Production Environment
+security:
+- bearerAuth: []
+  clientId: []
+tags:
+- name: Golf Clubs
+paths:
+  /v2/golfClubs:
+    get:
+      summary: Get list of golf clubs
+      description: returns list of golf clubs searched based on query. Does not return details.
+      tags:
+      - Golf Clubs
+      parameters:
+      - $ref: '#/components/parameters/LanguageParam'
+      - $ref: '#/components/parameters/CurrencyParam'
+      - name: codeType
+        schema:
+          type: string
+          enum:
+          - continent
+          - country
+          - region
+          - city
+          - airport
+          - facility
+        in: query
+      - name: codeValues
+        in: query
+        schema:
+          type: string
+          examples:
+          - a,e
+        description: value of the code that which to query. use comma to join multiple values.
+      responses:
+        '200':
+          description: list of golf clubs under given query
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/CommonResponse'
+                - type: object
+                  properties:
+                    data:
+                      type: object
+                      properties:
+                        golfClubs:
+                          type: array
+                          items:
+                            $ref: '#/components/schemas/GolfClub'
+      operationId: getV2GolfClubs
+      x-operation-id-source: derived
+  /v2/golfClub:
+    get:
+      summary: Get golf club detail
+      tags:
+      - Golf Clubs
+      parameters:
+      - $ref: '#/components/parameters/LanguageParam'
+      - $ref: '#/components/parameters/CurrencyParam'
+      - name: golfClubId
+        in: query
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: returns golf club details searched based on query.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/CommonResponse'
+                - type: object
+                  properties:
+                    data:
+                      type: object
+                      properties:
+                        golfClub:
+                          $ref: '#/components/schemas/GolfClubDetail'
+      operationId: getV2GolfClub
+      x-operation-id-source: derived
+components:
+  schemas:
+    GolfClubDetail:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/GolfClub'
+      - type: object
+        properties:
+          informationId:
+            type: number
+            description: id of the golf club information associated with this golf club
+            examples:
+            - 1234
+          information:
+            $ref: '#/components/schemas/GolfClubInformation'
+          informationDetails:
+            $ref: '#/components/schemas/GolfClubInformationDetail'
+    CourseTypeDetail:
+      type: object
+      properties:
+        holeName:
+          type: string
+        par:
+          type: number
+        handicap:
+          type: number
+        red:
+          type: number
+        yellow:
+          type: number
+        white:
+          type: number
+        blue:
+          type: number
+        black:
+          type: number
+    GolfClubInformationDetail:
+      type: object
+      properties:
+        checkpoints:
+          $ref: '#/components/schemas/MultiLanguageText'
+        cntHoles:
+          type: number
+        par:
+          type: number
+        courseLength:
+          type: number
+        courseLengthUnit:
+          type: string
+          enum:
+          - yard
+          - meter
+        telephone:
+          type: string
+        address:
+          $ref: '#/components/schemas/MultiLanguageText'
+        homepageURL:
+          type: string
+        latitude:
+          type: number
+        longitude:
+          type: number
+        googlePlaceId:
+          type: string
+        courses:
+          type: array
+          items:
+            $ref: '#/components/schemas/GolfCourse'
+        facilities:
+          type: array
+          items:
+            $ref: '#/components/schemas/GolfClubFacility'
+    MultiLanguageText:
+      type: object
+      properties:
+        en:
+          type: string
+        ko:
+          type: string
+        ja:
+          type: string
+        zh:
+          type: string
+        tw:
+          type: string
+        es:
+          type: string
+    CourseType:
+      type: object
+      properties:
+        id:
+          type: string
+        detail:
+          type: array
+          items:
+            $ref: '#/components/schemas/CourseTypeDetail'
+    GolfClub:
+      type: object
+      properties:
+        id:
+          type: string
+          examples:
+          - NA0123
+        name:
+          $ref: '#/components/schemas/MultiLanguageText'
+        thumbnailImages:
+          type: array
+          items:
+            type: string
+          description: list of thumbnail images for the golf course
+          examples:
+          - - https://tigerbooking.com/....
+        acceptedGroupSizes:
+          type: array
+          description: number of guests that the golf resort would accept for each tee time
+          items:
+            $ref: '#/components/schemas/AcceptedGroupSize'
+          examples:
+          - - 2
+            - 3
+            - 4
+        currency:
+          type: string
+        minPrice:
+          type: number
+          description: minimum price per tee-time that this club offers
+        minPriceDate:
+          type: string
+          description: date of that minimum price offer, in ISO-format
+          examples:
+          - '2025-01-01'
+        minPriceDateHour:
+          type: string
+          description: date and hour of that minimum price offer, in ISO-format. Always in local time.
+          examples:
+          - 2025-01-01 00:00
+        timezone:
+          type: string
+          description: timezone code of the golf club
+          examples:
+          - Asia/Seoul
+        category:
+          type: string
+          enum:
+          - standard
+          - package
+          examples:
+          - standard
+        lastUpdateAt:
+          type: string
+          description: last update datetime of this club information.
+          examples:
+          - '2025-01-01 00:00:00'
+    AcceptedGroupSize:
+      type: number
+      enum:
+      - 1
+      - 2
+      - 3
+      - 4
+      - 5
+    GolfClubFacility:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          $ref: '#/components/schemas/MultiLanguageText'
+        exists:
+          type: boolean
+    CommonResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+          - ok
+          - fail
+        data:
+          type:
+          - object
+          - 'null'
+          description: Payload of the response
+    GolfCourse:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          $ref: '#/components/schemas/MultiLanguageText'
+        types:
+          type: array
+          items:
+            $ref: '#/components/schemas/CourseType'
+    GolfClubInformation:
+      type: object
+      properties:
+        heading:
+          $ref: '#/components/schemas/MultiLanguageText'
+        includedItems:
+          $ref: '#/components/schemas/MultiLanguageText'
+        excludedItems:
+          $ref: '#/components/schemas/MultiLanguageText'
+        cancellationPolicy:
+          $ref: '#/components/schemas/MultiLanguageText'
+        important:
+          $ref: '#/components/schemas/MultiLanguageText'
+        extraNote:
+          $ref: '#/components/schemas/MultiLanguageText'
+  parameters:
+    LanguageParam:
+      name: language
+      in: query
+      required: true
+      schema:
+        type: string
+        enum:
+        - ko
+        - en
+        - ja
+        - es
+        - zh
+        - tw
+    CurrencyParam:
+      name: currency
+      in: query
+      required: true
+      schema:
+        type: string
+        examples:
+        - KRW
+  securitySchemes:
+    bearerAuth:
+      type: apiKey
+      name: Authorization
+      in: header
+    clientId:
+      type: apiKey
+      in: header
+      name: clientId

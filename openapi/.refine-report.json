@@ -1,0 +1,44 @@
+{
+  "provider": "agl",
+  "sources": [
+    "_original/agl-open-openapi-original.yml",
+    "_original/agl-ota-openapi-original.yml",
+    "_original/agl-tripcom-outbound-openapi-original.yml"
+  ],
+  "outputs": [
+    "agl-agltosupplier-api-openapi.yml",
+    "agl-suppliertoagl-api-openapi.yml",
+    "agl-codes-api-openapi.yml",
+    "agl-golf-clubs-api-openapi.yml",
+    "agl-reservations-api-openapi.yml",
+    "agl-static-packages-api-openapi.yml",
+    "agl-tee-times-api-openapi.yml",
+    "agl-reservation-api-openapi.yml"
+  ],
+  "archived": [],
+  "errors": [],
+  "warnings": [],
+  "notes": [
+    "sourced from openapi/_original/ (3 archived document(s)); previously refined output at the top level was skipped rather than re-split",
+    "agl-open-openapi-original.yml: upgraded openapi 3.1.1 -> OpenAPI 3.2.0",
+    "agl-ota-openapi-original.yml: upgraded openapi 3.1.1 -> OpenAPI 3.2.0",
+    "agl-ota-openapi-original.yml: declared missing tag: Codes",
+    "agl-ota-openapi-original.yml: declared missing tag: Golf Clubs",
+    "agl-ota-openapi-original.yml: declared missing tag: Reservations",
+    "agl-ota-openapi-original.yml: declared missing tag: Static Packages",
+    "agl-ota-openapi-original.yml: declared missing tag: Tee Times",
+    "agl-tripcom-outbound-openapi-original.yml: upgraded openapi 3.0.1 -> OpenAPI 3.2.0",
+    "agl-tripcom-outbound-openapi-original.yml: declared missing tag: Reservation",
+    "apis.yml register: already-registered"
+  ],
+  "skipped": [
+    "agl-agltosupplier-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "agl-codes-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "agl-golf-clubs-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "agl-reservation-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "agl-reservations-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "agl-static-packages-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "agl-suppliertoagl-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "agl-tee-times-api-openapi.yml: previously refined output, superseded by openapi/_original/"
+  ]
+}
