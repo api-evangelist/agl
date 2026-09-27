@@ -113,85 +113,6 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    CourseTypeDetail:
-      type: object
-      properties:
-        holeName:
-          type: string
-        par:
-          type: number
-        handicap:
-          type: number
-        red:
-          type: number
-        yellow:
-          type: number
-        white:
-          type: number
-        blue:
-          type: number
-        black:
-          type: number
-    GolfClubInformationDetail:
-      type: object
-      properties:
-        checkpoints:
-          $ref: '#/components/schemas/MultiLanguageText'
-        cntHoles:
-          type: number
-        par:
-          type: number
-        courseLength:
-          type: number
-        courseLengthUnit:
-          type: string
-          enum:
-          - yard
-          - meter
-        telephone:
-          type: string
-        address:
-          $ref: '#/components/schemas/MultiLanguageText'
-        homepageURL:
-          type: string
-        latitude:
-          type: number
-        longitude:
-          type: number
-        googlePlaceId:
-          type: string
-        courses:
-          type: array
-          items:
-            $ref: '#/components/schemas/GolfCourse'
-        facilities:
-          type: array
-          items:
-            $ref: '#/components/schemas/GolfClubFacility'
-    MultiLanguageText:
-      type: object
-      properties:
-        en:
-          type: string
-        ko:
-          type: string
-        ja:
-          type: string
-        zh:
-          type: string
-        tw:
-          type: string
-        es:
-          type: string
-    CourseType:
-      type: object
-      properties:
-        id:
-          type: string
-        detail:
-          type: array
-          items:
-            $ref: '#/components/schemas/CourseTypeDetail'
     AccommodationInfo:
       type: object
       properties:
@@ -218,244 +139,6 @@ components:
                     enum:
                     - main
                     - small
-    CommonResponse:
-      type: object
-      properties:
-        status:
-          type: string
-          enum:
-          - ok
-          - fail
-        data:
-          type:
-          - object
-          - 'null'
-          description: Payload of the response
-    GolfCourse:
-      type: object
-      properties:
-        id:
-          type: integer
-        name:
-          $ref: '#/components/schemas/MultiLanguageText'
-        types:
-          type: array
-          items:
-            $ref: '#/components/schemas/CourseType'
-    GolfClubDetail:
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/GolfClub'
-      - type: object
-        properties:
-          informationId:
-            type: number
-            description: id of the golf club information associated with this golf club
-            examples:
-            - 1234
-          information:
-            $ref: '#/components/schemas/GolfClubInformation'
-          informationDetails:
-            $ref: '#/components/schemas/GolfClubInformationDetail'
-    StaticPackage:
-      type: object
-      properties:
-        id:
-          type: string
-          examples:
-          - (id of the package)
-        name:
-          $ref: '#/components/schemas/MultiLanguageText'
-        hotelNights:
-          type: number
-          examples:
-          - 2
-        packageNights:
-          type: number
-          examples:
-          - 3
-        thumbnailImages:
-          type: array
-          items:
-            type: string
-          description: list of thumbnail images for the golf course
-          examples:
-          - - https://tigerbooking.com/....
-        suggestedPlanItineraries:
-          $ref: '#/components/schemas/MultiLanguageText'
-        important:
-          $ref: '#/components/schemas/MultiLanguageText'
-        caution:
-          $ref: '#/components/schemas/MultiLanguageText'
-        etiquette:
-          $ref: '#/components/schemas/MultiLanguageText'
-        golfClubs:
-          type: array
-          items:
-            $ref: '#/components/schemas/GolfClubDetail'
-        includes:
-          type: array
-          items:
-            type: object
-            properties:
-              packageItemType:
-                type: string
-                enum:
-                - accommodation
-                - transportation
-                - caddy
-                - cart
-                - '...'
-              packageItemIncluded:
-                type: string
-                examples:
-                - included, excluded, ...
-        includedItemsText:
-          type: string
-          description: html, containing information of the items included in this package
-        disclaimerText:
-          type: string
-          description: html, containing terms and other conditions of this package item.
-    GolfClub:
-      type: object
-      properties:
-        id:
-          type: string
-          examples:
-          - NA0123
-        name:
-          $ref: '#/components/schemas/MultiLanguageText'
-        thumbnailImages:
-          type: array
-          items:
-            type: string
-          description: list of thumbnail images for the golf course
-          examples:
-          - - https://tigerbooking.com/....
-        acceptedGroupSizes:
-          type: array
-          description: number of guests that the golf resort would accept for each tee time
-          items:
-            $ref: '#/components/schemas/AcceptedGroupSize'
-          examples:
-          - - 2
-            - 3
-            - 4
-        currency:
-          type: string
-        minPrice:
-          type: number
-          description: minimum price per tee-time that this club offers
-        minPriceDate:
-          type: string
-          description: date of that minimum price offer, in ISO-format
-          examples:
-          - '2025-01-01'
-        minPriceDateHour:
-          type: string
-          description: date and hour of that minimum price offer, in ISO-format. Always in local time.
-          examples:
-          - 2025-01-01 00:00
-        timezone:
-          type: string
-          description: timezone code of the golf club
-          examples:
-          - Asia/Seoul
-        category:
-          type: string
-          enum:
-          - standard
-          - package
-          examples:
-          - standard
-        lastUpdateAt:
-          type: string
-          description: last update datetime of this club information.
-          examples:
-          - '2025-01-01 00:00:00'
-    AcceptedGroupSize:
-      type: number
-      enum:
-      - 1
-      - 2
-      - 3
-      - 4
-      - 5
-    RecommendedFlight:
-      type: object
-      properties:
-        inboundFlightNumber:
-          type: string
-          description: flight number of the inboound flight
-          examples:
-          - KE001
-        inboundFlightTime:
-          type: string
-          description: ISO format time of the inbound flight
-          examples:
-          - 08:00
-        inboundDepartureAirportCode:
-          type: string
-          description: airport code of the inbound flight departure airport
-          examples:
-          - ICN
-        inboundArrivalAirportCode:
-          type: string
-          description: airport code of the inbound flight arrival airport
-          examples:
-          - PUS
-        outboundFlightNumber:
-          type: string
-          description: flight number of the outbound flight
-          examples:
-          - KE002
-        outboundFlightTime:
-          type: string
-          description: ISO format time of the outbound flight
-          examples:
-          - '22:00'
-        outboundDepartureAirportCode:
-          type: string
-          description: airport code of the outbound flight departure airport
-          examples:
-          - PUS
-        outboundArrivalAirportCode:
-          type: string
-          description: airport code of the outbound flight arrival airport
-          examples:
-          - ICN
-    CancellationPolicy:
-      type: object
-      properties:
-        currency:
-          type: string
-        policies:
-          type: array
-          items:
-            type: object
-            properties:
-              amountType:
-                $ref: '#/components/schemas/AmountType'
-                examples:
-                - cancellationFee or cancellationFeePerc
-              amount:
-                type: number
-                format: decimal
-                description: Percentage of the cancellation fee or cancellation fee applied after a specific date and time
-                examples:
-                - 50
-              appliesUntil:
-                type: string
-                description: ISO format UTC date time that this cancellation policy applies
-                examples:
-                - 2025-02-22 11:00
-          examples:
-          - - amountType: cancellationFeePerc
-              amount: 50
-              appliesUntil: 2025-02-22 11:00
-            - amountType: cancellationFeePerc
-              amount: 100
-              appliesUntil: 2025-02-30 11:00
     StaticPackagePlan:
       type: object
       properties:
@@ -588,15 +271,42 @@ components:
                 $ref: '#/components/schemas/Amount'
         cancellationPolicy:
           $ref: '#/components/schemas/CancellationPolicy'
-    GolfClubFacility:
+    CommonResponse:
       type: object
       properties:
-        id:
+        status:
           type: string
-        name:
-          $ref: '#/components/schemas/MultiLanguageText'
-        exists:
-          type: boolean
+          enum:
+          - ok
+          - fail
+        data:
+          type:
+          - object
+          - 'null'
+          description: Payload of the response
+    AcceptedGroupSize:
+      type: number
+      enum:
+      - 1
+      - 2
+      - 3
+      - 4
+      - 5
+    GolfClubDetail:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/GolfClub'
+      - type: object
+        properties:
+          informationId:
+            type: number
+            description: id of the golf club information associated with this golf club
+            examples:
+            - 1234
+          information:
+            $ref: '#/components/schemas/GolfClubInformation'
+          informationDetails:
+            $ref: '#/components/schemas/GolfClubInformationDetail'
     Amount:
       type: object
       properties:
@@ -626,16 +336,116 @@ components:
           - CHARGED
           - VOIDED
           nullable: true
-    AmountType:
-      type: string
-      enum:
-      - teeTimeAmount
-      - teeTimeSumAmount
-      - staticPackageAmount
-      - staticPackageTotalAmount
-      - cancellationFee
-      - cancellationFeePerc
-      description: type of the amount line. Used to identify the type of amount.
+    StaticPackage:
+      type: object
+      properties:
+        id:
+          type: string
+          examples:
+          - (id of the package)
+        name:
+          $ref: '#/components/schemas/MultiLanguageText'
+        hotelNights:
+          type: number
+          examples:
+          - 2
+        packageNights:
+          type: number
+          examples:
+          - 3
+        thumbnailImages:
+          type: array
+          items:
+            type: string
+          description: list of thumbnail images for the golf course
+          examples:
+          - - https://tigerbooking.com/....
+        suggestedPlanItineraries:
+          $ref: '#/components/schemas/MultiLanguageText'
+        important:
+          $ref: '#/components/schemas/MultiLanguageText'
+        caution:
+          $ref: '#/components/schemas/MultiLanguageText'
+        etiquette:
+          $ref: '#/components/schemas/MultiLanguageText'
+        golfClubs:
+          type: array
+          items:
+            $ref: '#/components/schemas/GolfClubDetail'
+        includes:
+          type: array
+          items:
+            type: object
+            properties:
+              packageItemType:
+                type: string
+                enum:
+                - accommodation
+                - transportation
+                - caddy
+                - cart
+                - '...'
+              packageItemIncluded:
+                type: string
+                examples:
+                - included, excluded, ...
+        includedItemsText:
+          type: string
+          description: html, containing information of the items included in this package
+        disclaimerText:
+          type: string
+          description: html, containing terms and other conditions of this package item.
+    GolfClubInformationDetail:
+      type: object
+      properties:
+        checkpoints:
+          $ref: '#/components/schemas/MultiLanguageText'
+        cntHoles:
+          type: number
+        par:
+          type: number
+        courseLength:
+          type: number
+        courseLengthUnit:
+          type: string
+          enum:
+          - yard
+          - meter
+        telephone:
+          type: string
+        address:
+          $ref: '#/components/schemas/MultiLanguageText'
+        homepageURL:
+          type: string
+        latitude:
+          type: number
+        longitude:
+          type: number
+        googlePlaceId:
+          type: string
+        courses:
+          type: array
+          items:
+            $ref: '#/components/schemas/GolfCourse'
+        facilities:
+          type: array
+          items:
+            $ref: '#/components/schemas/GolfClubFacility'
+    MultiLanguageText:
+      type: object
+      properties:
+        en:
+          type: string
+        ko:
+          type: string
+        ja:
+          type: string
+        zh:
+          type: string
+        tw:
+          type: string
+        es:
+          type: string
     GolfClubInformation:
       type: object
       properties:
@@ -651,7 +461,205 @@ components:
           $ref: '#/components/schemas/MultiLanguageText'
         extraNote:
           $ref: '#/components/schemas/MultiLanguageText'
+    GolfCourse:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          $ref: '#/components/schemas/MultiLanguageText'
+        types:
+          type: array
+          items:
+            $ref: '#/components/schemas/CourseType'
+    GolfClub:
+      type: object
+      properties:
+        id:
+          type: string
+          examples:
+          - NA0123
+        name:
+          $ref: '#/components/schemas/MultiLanguageText'
+        thumbnailImages:
+          type: array
+          items:
+            type: string
+          description: list of thumbnail images for the golf course
+          examples:
+          - - https://tigerbooking.com/....
+        acceptedGroupSizes:
+          type: array
+          description: number of guests that the golf resort would accept for each tee time
+          items:
+            $ref: '#/components/schemas/AcceptedGroupSize'
+          examples:
+          - - 2
+            - 3
+            - 4
+        currency:
+          type: string
+        minPrice:
+          type: number
+          description: minimum price per tee-time that this club offers
+        minPriceDate:
+          type: string
+          description: date of that minimum price offer, in ISO-format
+          examples:
+          - '2025-01-01'
+        minPriceDateHour:
+          type: string
+          description: date and hour of that minimum price offer, in ISO-format. Always in local time.
+          examples:
+          - 2025-01-01 00:00
+        timezone:
+          type: string
+          description: timezone code of the golf club
+          examples:
+          - Asia/Seoul
+        category:
+          type: string
+          enum:
+          - standard
+          - package
+          examples:
+          - standard
+        lastUpdateAt:
+          type: string
+          description: last update datetime of this club information.
+          examples:
+          - '2025-01-01 00:00:00'
+    CourseType:
+      type: object
+      properties:
+        id:
+          type: string
+        detail:
+          type: array
+          items:
+            $ref: '#/components/schemas/CourseTypeDetail'
+    CancellationPolicy:
+      type: object
+      properties:
+        currency:
+          type: string
+        policies:
+          type: array
+          items:
+            type: object
+            properties:
+              amountType:
+                $ref: '#/components/schemas/AmountType'
+                examples:
+                - cancellationFee or cancellationFeePerc
+              amount:
+                type: number
+                format: decimal
+                description: Percentage of the cancellation fee or cancellation fee applied after a specific date and time
+                examples:
+                - 50
+              appliesUntil:
+                type: string
+                description: ISO format UTC date time that this cancellation policy applies
+                examples:
+                - 2025-02-22 11:00
+          examples:
+          - - amountType: cancellationFeePerc
+              amount: 50
+              appliesUntil: 2025-02-22 11:00
+            - amountType: cancellationFeePerc
+              amount: 100
+              appliesUntil: 2025-02-30 11:00
+    AmountType:
+      type: string
+      enum:
+      - teeTimeAmount
+      - teeTimeSumAmount
+      - staticPackageAmount
+      - staticPackageTotalAmount
+      - cancellationFee
+      - cancellationFeePerc
+      description: type of the amount line. Used to identify the type of amount.
+    CourseTypeDetail:
+      type: object
+      properties:
+        holeName:
+          type: string
+        par:
+          type: number
+        handicap:
+          type: number
+        red:
+          type: number
+        yellow:
+          type: number
+        white:
+          type: number
+        blue:
+          type: number
+        black:
+          type: number
+    RecommendedFlight:
+      type: object
+      properties:
+        inboundFlightNumber:
+          type: string
+          description: flight number of the inboound flight
+          examples:
+          - KE001
+        inboundFlightTime:
+          type: string
+          description: ISO format time of the inbound flight
+          examples:
+          - 08:00
+        inboundDepartureAirportCode:
+          type: string
+          description: airport code of the inbound flight departure airport
+          examples:
+          - ICN
+        inboundArrivalAirportCode:
+          type: string
+          description: airport code of the inbound flight arrival airport
+          examples:
+          - PUS
+        outboundFlightNumber:
+          type: string
+          description: flight number of the outbound flight
+          examples:
+          - KE002
+        outboundFlightTime:
+          type: string
+          description: ISO format time of the outbound flight
+          examples:
+          - '22:00'
+        outboundDepartureAirportCode:
+          type: string
+          description: airport code of the outbound flight departure airport
+          examples:
+          - PUS
+        outboundArrivalAirportCode:
+          type: string
+          description: airport code of the outbound flight arrival airport
+          examples:
+          - ICN
+    GolfClubFacility:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          $ref: '#/components/schemas/MultiLanguageText'
+        exists:
+          type: boolean
   parameters:
+    CurrencyParam:
+      name: currency
+      in: query
+      required: true
+      schema:
+        type: string
+        examples:
+        - KRW
     LanguageParam:
       name: language
       in: query
@@ -665,14 +673,6 @@ components:
         - es
         - zh
         - tw
-    CurrencyParam:
-      name: currency
-      in: query
-      required: true
-      schema:
-        type: string
-        examples:
-        - KRW
   securitySchemes:
     bearerAuth:
       type: apiKey

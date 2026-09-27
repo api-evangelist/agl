@@ -74,30 +74,6 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    FailResponse:
-      properties:
-        isSuccess:
-          type: boolean
-          examples:
-          - false
-        rstCd:
-          type: string
-          examples:
-          - INVALID_INPUT
-        rstMsg:
-          type: string
-          examples:
-          - Invalid input parameters
-        statusCode:
-          type: integer
-          examples:
-          - 400
-      required:
-      - isSuccess
-      - rstCd
-      - rstMsg
-      - statusCode
-      type: object
     ReservationResponse:
       properties:
         isSuccess:
@@ -186,6 +162,30 @@ components:
           type: string
         statusCode:
           type: integer
+      required:
+      - isSuccess
+      - rstCd
+      - rstMsg
+      - statusCode
+      type: object
+    FailResponse:
+      properties:
+        isSuccess:
+          type: boolean
+          examples:
+          - false
+        rstCd:
+          type: string
+          examples:
+          - INVALID_INPUT
+        rstMsg:
+          type: string
+          examples:
+          - Invalid input parameters
+        statusCode:
+          type: integer
+          examples:
+          - 400
       required:
       - isSuccess
       - rstCd

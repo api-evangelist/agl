@@ -280,24 +280,28 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    City:
+    Country:
       type: object
       properties:
         id:
           type: string
         name:
           $ref: '#/components/schemas/MultiLanguageText'
-        countryId:
+        continentId:
           type: string
-    Region:
+    CommonResponse:
       type: object
       properties:
-        id:
+        status:
           type: string
-        name:
-          $ref: '#/components/schemas/MultiLanguageText'
-        countryId:
-          type: string
+          enum:
+          - ok
+          - fail
+        data:
+          type:
+          - object
+          - 'null'
+          description: Payload of the response
     MultiLanguageText:
       type: object
       properties:
@@ -313,16 +317,6 @@ components:
           type: string
         es:
           type: string
-    Continent:
-      type: object
-      properties:
-        id:
-          type: string
-          description: string that identifies a continent
-          examples:
-          - Asia
-        name:
-          $ref: '#/components/schemas/MultiLanguageText'
     Airport:
       type: object
       properties:
@@ -330,14 +324,14 @@ components:
           type: string
         name:
           $ref: '#/components/schemas/MultiLanguageText'
-    Country:
+    City:
       type: object
       properties:
         id:
           type: string
         name:
           $ref: '#/components/schemas/MultiLanguageText'
-        continentId:
+        countryId:
           type: string
     GolfClubFacility:
       type: object
@@ -348,19 +342,25 @@ components:
           $ref: '#/components/schemas/MultiLanguageText'
         exists:
           type: boolean
-    CommonResponse:
+    Region:
       type: object
       properties:
-        status:
+        id:
           type: string
-          enum:
-          - ok
-          - fail
-        data:
-          type:
-          - object
-          - 'null'
-          description: Payload of the response
+        name:
+          $ref: '#/components/schemas/MultiLanguageText'
+        countryId:
+          type: string
+    Continent:
+      type: object
+      properties:
+        id:
+          type: string
+          description: string that identifies a continent
+          examples:
+          - Asia
+        name:
+          $ref: '#/components/schemas/MultiLanguageText'
   securitySchemes:
     bearerAuth:
       type: apiKey

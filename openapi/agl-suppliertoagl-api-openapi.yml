@@ -238,159 +238,10 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    Availability:
-      properties:
-        available:
-          type: boolean
-        courseCode:
-          items:
-            type: string
-        golfClubCode:
-          type: string
-        playDate:
-          type: string
-        time:
-          items:
-            $ref: '#/components/schemas/Time'
-          type: array
-      required:
-      - golfClubCode
-      - available
-      type: object
-    Course:
-      properties:
-        courseCode:
-          type: string
-        courseHoleCount:
-          type: integer
-        courseName:
-          type: string
-        startHole:
-          type: integer
-      required:
-      - courseCode
-      - courseName
-      type: object
     GolfClubListData:
       type: array
       items:
         $ref: '#/components/schemas/GolfClub'
-    Price:
-      properties:
-        additionalTax:
-          type: number
-        caddieFee:
-          type: number
-        cartFee:
-          type: number
-        greenFee:
-          type: number
-        playerCount:
-          type: integer
-        tax:
-          type: number
-        unitPrice:
-          type: number
-      required:
-      - playerCount
-      - greenFee
-      - unitPrice
-      type: object
-    TeeTimeListData:
-      type: array
-      items:
-        $ref: '#/components/schemas/TeeTimeDailyInfo'
-    FailResponse:
-      properties:
-        isSuccess:
-          type: boolean
-          examples:
-          - false
-        rstCd:
-          type: string
-          examples:
-          - INVALID_INPUT
-        rstMsg:
-          type: string
-          examples:
-          - Invalid input parameters
-        statusCode:
-          type: integer
-          examples:
-          - 400
-      required:
-      - isSuccess
-      - rstCd
-      - rstMsg
-      - statusCode
-      type: object
-    RefundPolicy:
-      properties:
-        refundDate:
-          type: integer
-        refundFee:
-          type: integer
-        refundUnit:
-          type: integer
-      required:
-      - refundDate
-      - refundFee
-      - refundUnit
-      type: object
-    HoleInfo:
-      properties:
-        distance:
-          type: integer
-        distanceUnit:
-          type: integer
-        holeName:
-          type: string
-        holeNumber:
-          type: integer
-        par:
-          type: integer
-      required:
-      - holeNumber
-      type: object
-    TeeTimeDailyInfo:
-      properties:
-        courseCode:
-          type: string
-        includeCaddie:
-          type: boolean
-        includeCart:
-          type: boolean
-        maxPlayers:
-          type: integer
-        minPlayers:
-          type: integer
-        playDate:
-          type: string
-        price:
-          items:
-            $ref: '#/components/schemas/Price'
-          type: array
-        refundPolicy:
-          items:
-            $ref: '#/components/schemas/RefundPolicy'
-          type: array
-        reservationType:
-          type: integer
-        timeDaily:
-          items:
-            $ref: '#/components/schemas/Time'
-          type: array
-      required:
-      - playDate
-      - courseCode
-      - minPlayers
-      - maxPlayers
-      - includeCart
-      - includeCaddie
-      - reservationType
-      - timeDaily
-      - price
-      type: object
     GolfClub:
       properties:
         address:
@@ -461,6 +312,107 @@ components:
       - isGuestInfoRequired
       - courses
       type: object
+    FailResponse:
+      properties:
+        isSuccess:
+          type: boolean
+          examples:
+          - false
+        rstCd:
+          type: string
+          examples:
+          - INVALID_INPUT
+        rstMsg:
+          type: string
+          examples:
+          - Invalid input parameters
+        statusCode:
+          type: integer
+          examples:
+          - 400
+      required:
+      - isSuccess
+      - rstCd
+      - rstMsg
+      - statusCode
+      type: object
+    Course:
+      properties:
+        courseCode:
+          type: string
+        courseHoleCount:
+          type: integer
+        courseName:
+          type: string
+        startHole:
+          type: integer
+      required:
+      - courseCode
+      - courseName
+      type: object
+    Time:
+      properties:
+        startTime:
+          type: string
+        teeTimeCode:
+          type: string
+      required:
+      - startTime
+      type: object
+    HoleInfo:
+      properties:
+        distance:
+          type: integer
+        distanceUnit:
+          type: integer
+        holeName:
+          type: string
+        holeNumber:
+          type: integer
+        par:
+          type: integer
+      required:
+      - holeNumber
+      type: object
+    TeeTimeDailyInfo:
+      properties:
+        courseCode:
+          type: string
+        includeCaddie:
+          type: boolean
+        includeCart:
+          type: boolean
+        maxPlayers:
+          type: integer
+        minPlayers:
+          type: integer
+        playDate:
+          type: string
+        price:
+          items:
+            $ref: '#/components/schemas/Price'
+          type: array
+        refundPolicy:
+          items:
+            $ref: '#/components/schemas/RefundPolicy'
+          type: array
+        reservationType:
+          type: integer
+        timeDaily:
+          items:
+            $ref: '#/components/schemas/Time'
+          type: array
+      required:
+      - playDate
+      - courseCode
+      - minPlayers
+      - maxPlayers
+      - includeCart
+      - includeCaddie
+      - reservationType
+      - timeDaily
+      - price
+      type: object
     SuccessResponse:
       properties:
         isSuccess:
@@ -485,14 +437,62 @@ components:
       - rstMsg
       - statusCode
       type: object
-    Time:
+    Price:
       properties:
-        startTime:
-          type: string
-        teeTimeCode:
-          type: string
+        additionalTax:
+          type: number
+        caddieFee:
+          type: number
+        cartFee:
+          type: number
+        greenFee:
+          type: number
+        playerCount:
+          type: integer
+        tax:
+          type: number
+        unitPrice:
+          type: number
       required:
-      - startTime
+      - playerCount
+      - greenFee
+      - unitPrice
+      type: object
+    Availability:
+      properties:
+        available:
+          type: boolean
+        courseCode:
+          items:
+            type: string
+        golfClubCode:
+          type: string
+        playDate:
+          type: string
+        time:
+          items:
+            $ref: '#/components/schemas/Time'
+          type: array
+      required:
+      - golfClubCode
+      - available
+      type: object
+    TeeTimeListData:
+      type: array
+      items:
+        $ref: '#/components/schemas/TeeTimeDailyInfo'
+    RefundPolicy:
+      properties:
+        refundDate:
+          type: integer
+        refundFee:
+          type: integer
+        refundUnit:
+          type: integer
+      required:
+      - refundDate
+      - refundFee
+      - refundUnit
       type: object
   parameters:
     X-Supplier-Code:

@@ -96,40 +96,6 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    GolfClubDetail:
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/GolfClub'
-      - type: object
-        properties:
-          informationId:
-            type: number
-            description: id of the golf club information associated with this golf club
-            examples:
-            - 1234
-          information:
-            $ref: '#/components/schemas/GolfClubInformation'
-          informationDetails:
-            $ref: '#/components/schemas/GolfClubInformationDetail'
-    CourseTypeDetail:
-      type: object
-      properties:
-        holeName:
-          type: string
-        par:
-          type: number
-        handicap:
-          type: number
-        red:
-          type: number
-        yellow:
-          type: number
-        white:
-          type: number
-        blue:
-          type: number
-        black:
-          type: number
     GolfClubInformationDetail:
       type: object
       properties:
@@ -166,30 +132,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/GolfClubFacility'
-    MultiLanguageText:
-      type: object
-      properties:
-        en:
-          type: string
-        ko:
-          type: string
-        ja:
-          type: string
-        zh:
-          type: string
-        tw:
-          type: string
-        es:
-          type: string
-    CourseType:
-      type: object
-      properties:
-        id:
-          type: string
-        detail:
-          type: array
-          items:
-            $ref: '#/components/schemas/CourseTypeDetail'
     GolfClub:
       type: object
       properties:
@@ -247,23 +189,6 @@ components:
           description: last update datetime of this club information.
           examples:
           - '2025-01-01 00:00:00'
-    AcceptedGroupSize:
-      type: number
-      enum:
-      - 1
-      - 2
-      - 3
-      - 4
-      - 5
-    GolfClubFacility:
-      type: object
-      properties:
-        id:
-          type: string
-        name:
-          $ref: '#/components/schemas/MultiLanguageText'
-        exists:
-          type: boolean
     CommonResponse:
       type: object
       properties:
@@ -277,17 +202,72 @@ components:
           - object
           - 'null'
           description: Payload of the response
-    GolfCourse:
+    CourseType:
       type: object
       properties:
         id:
-          type: integer
-        name:
-          $ref: '#/components/schemas/MultiLanguageText'
-        types:
+          type: string
+        detail:
           type: array
           items:
-            $ref: '#/components/schemas/CourseType'
+            $ref: '#/components/schemas/CourseTypeDetail'
+    AcceptedGroupSize:
+      type: number
+      enum:
+      - 1
+      - 2
+      - 3
+      - 4
+      - 5
+    CourseTypeDetail:
+      type: object
+      properties:
+        holeName:
+          type: string
+        par:
+          type: number
+        handicap:
+          type: number
+        red:
+          type: number
+        yellow:
+          type: number
+        white:
+          type: number
+        blue:
+          type: number
+        black:
+          type: number
+    MultiLanguageText:
+      type: object
+      properties:
+        en:
+          type: string
+        ko:
+          type: string
+        ja:
+          type: string
+        zh:
+          type: string
+        tw:
+          type: string
+        es:
+          type: string
+    GolfClubDetail:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/GolfClub'
+      - type: object
+        properties:
+          informationId:
+            type: number
+            description: id of the golf club information associated with this golf club
+            examples:
+            - 1234
+          information:
+            $ref: '#/components/schemas/GolfClubInformation'
+          informationDetails:
+            $ref: '#/components/schemas/GolfClubInformationDetail'
     GolfClubInformation:
       type: object
       properties:
@@ -303,7 +283,35 @@ components:
           $ref: '#/components/schemas/MultiLanguageText'
         extraNote:
           $ref: '#/components/schemas/MultiLanguageText'
+    GolfCourse:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          $ref: '#/components/schemas/MultiLanguageText'
+        types:
+          type: array
+          items:
+            $ref: '#/components/schemas/CourseType'
+    GolfClubFacility:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          $ref: '#/components/schemas/MultiLanguageText'
+        exists:
+          type: boolean
   parameters:
+    CurrencyParam:
+      name: currency
+      in: query
+      required: true
+      schema:
+        type: string
+        examples:
+        - KRW
     LanguageParam:
       name: language
       in: query
@@ -317,14 +325,6 @@ components:
         - es
         - zh
         - tw
-    CurrencyParam:
-      name: currency
-      in: query
-      required: true
-      schema:
-        type: string
-        examples:
-        - KRW
   securitySchemes:
     bearerAuth:
       type: apiKey

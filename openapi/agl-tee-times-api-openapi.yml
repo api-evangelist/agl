@@ -130,6 +130,79 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
+    AmountType:
+      type: string
+      enum:
+      - teeTimeAmount
+      - teeTimeSumAmount
+      - staticPackageAmount
+      - staticPackageTotalAmount
+      - cancellationFee
+      - cancellationFeePerc
+      description: type of the amount line. Used to identify the type of amount.
+    TeeTimeWithAmount:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/TeeTime'
+      - type: object
+        properties:
+          confirmationType:
+            type: string
+            enum:
+            - immediate
+            - manual_confirmation
+          acceptedGroupSizes:
+            type: array
+            description: number of guests that the golf resort would accept for each tee time
+            items:
+              $ref: '#/components/schemas/AcceptedGroupSize'
+            examples:
+            - - 4
+          amounts:
+            type: array
+            items:
+              type: object
+              properties:
+                groupSize:
+                  type: number
+                  examples:
+                  - 4
+                amount:
+                  $ref: '#/components/schemas/TeetimeAmount'
+    Course:
+      type: object
+      properties:
+        id:
+          type: string
+          examples:
+          - d229f6afc72e4533ba55a4ee89b0355a
+        name:
+          $ref: '#/components/schemas/MultiLanguageText'
+        teeTimes:
+          type: array
+          items:
+            $ref: '#/components/schemas/TeeTimeWithAmount'
+    CommonResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+          - ok
+          - fail
+        data:
+          type:
+          - object
+          - 'null'
+          description: Payload of the response
+    AcceptedGroupSize:
+      type: number
+      enum:
+      - 1
+      - 2
+      - 3
+      - 4
+      - 5
     TeeTime:
       type: object
       properties:
@@ -205,80 +278,15 @@ components:
           type: string
         es:
           type: string
-    AmountType:
-      type: string
-      enum:
-      - teeTimeAmount
-      - teeTimeSumAmount
-      - staticPackageAmount
-      - staticPackageTotalAmount
-      - cancellationFee
-      - cancellationFeePerc
-      description: type of the amount line. Used to identify the type of amount.
-    AcceptedGroupSize:
-      type: number
-      enum:
-      - 1
-      - 2
-      - 3
-      - 4
-      - 5
-    TeeTimeWithAmount:
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/TeeTime'
-      - type: object
-        properties:
-          confirmationType:
-            type: string
-            enum:
-            - immediate
-            - manual_confirmation
-          acceptedGroupSizes:
-            type: array
-            description: number of guests that the golf resort would accept for each tee time
-            items:
-              $ref: '#/components/schemas/AcceptedGroupSize'
-            examples:
-            - - 4
-          amounts:
-            type: array
-            items:
-              type: object
-              properties:
-                groupSize:
-                  type: number
-                  examples:
-                  - 4
-                amount:
-                  $ref: '#/components/schemas/TeetimeAmount'
-    Course:
-      type: object
-      properties:
-        id:
-          type: string
-          examples:
-          - d229f6afc72e4533ba55a4ee89b0355a
-        name:
-          $ref: '#/components/schemas/MultiLanguageText'
-        teeTimes:
-          type: array
-          items:
-            $ref: '#/components/schemas/TeeTimeWithAmount'
-    CommonResponse:
-      type: object
-      properties:
-        status:
-          type: string
-          enum:
-          - ok
-          - fail
-        data:
-          type:
-          - object
-          - 'null'
-          description: Payload of the response
   parameters:
+    CurrencyParam:
+      name: currency
+      in: query
+      required: true
+      schema:
+        type: string
+        examples:
+        - KRW
     LanguageParam:
       name: language
       in: query
@@ -292,14 +300,6 @@ components:
         - es
         - zh
         - tw
-    CurrencyParam:
-      name: currency
-      in: query
-      required: true
-      schema:
-        type: string
-        examples:
-        - KRW
   securitySchemes:
     bearerAuth:
       type: apiKey

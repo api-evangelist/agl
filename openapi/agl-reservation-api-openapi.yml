@@ -37,22 +37,6 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    JToken:
-      type: array
-      items:
-        $ref: '#/components/schemas/JToken'
-    ServiceNameEnum:
-      enum:
-      - 0
-      - 1
-      - 2
-      - 3
-      - 4
-      - 5
-      - 6
-      - 7
-      type: integer
-      format: int32
     TripComRequestHeader:
       required:
       - accountId
@@ -77,6 +61,22 @@ components:
           minLength: 1
           type: string
       additionalProperties: false
+    JToken:
+      type: array
+      items:
+        $ref: '#/components/schemas/JToken'
+    ServiceNameEnum:
+      enum:
+      - 0
+      - 1
+      - 2
+      - 3
+      - 4
+      - 5
+      - 6
+      - 7
+      type: integer
+      format: int32
     JObjectTripComRequestDto:
       type: object
       properties:
