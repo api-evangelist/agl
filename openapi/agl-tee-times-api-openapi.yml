@@ -130,16 +130,21 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    AmountType:
-      type: string
-      enum:
-      - teeTimeAmount
-      - teeTimeSumAmount
-      - staticPackageAmount
-      - staticPackageTotalAmount
-      - cancellationFee
-      - cancellationFeePerc
-      description: type of the amount line. Used to identify the type of amount.
+    MultiLanguageText:
+      type: object
+      properties:
+        en:
+          type: string
+        ko:
+          type: string
+        ja:
+          type: string
+        zh:
+          type: string
+        tw:
+          type: string
+        es:
+          type: string
     TeeTimeWithAmount:
       type: object
       allOf:
@@ -182,19 +187,16 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/TeeTimeWithAmount'
-    CommonResponse:
-      type: object
-      properties:
-        status:
-          type: string
-          enum:
-          - ok
-          - fail
-        data:
-          type:
-          - object
-          - 'null'
-          description: Payload of the response
+    AmountType:
+      type: string
+      enum:
+      - teeTimeAmount
+      - teeTimeSumAmount
+      - staticPackageAmount
+      - staticPackageTotalAmount
+      - cancellationFee
+      - cancellationFeePerc
+      description: type of the amount line. Used to identify the type of amount.
     AcceptedGroupSize:
       type: number
       enum:
@@ -242,6 +244,19 @@ components:
               type: number
               examples:
               - 0
+    CommonResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+          - ok
+          - fail
+        data:
+          type:
+          - object
+          - 'null'
+          description: Payload of the response
     TeetimeAmount:
       type: object
       properties:
@@ -263,30 +278,7 @@ components:
           description: 100x of the amount, to represent cents properly
           examples:
           - 15600
-    MultiLanguageText:
-      type: object
-      properties:
-        en:
-          type: string
-        ko:
-          type: string
-        ja:
-          type: string
-        zh:
-          type: string
-        tw:
-          type: string
-        es:
-          type: string
   parameters:
-    CurrencyParam:
-      name: currency
-      in: query
-      required: true
-      schema:
-        type: string
-        examples:
-        - KRW
     LanguageParam:
       name: language
       in: query
@@ -300,6 +292,14 @@ components:
         - es
         - zh
         - tw
+    CurrencyParam:
+      name: currency
+      in: query
+      required: true
+      schema:
+        type: string
+        examples:
+        - KRW
   securitySchemes:
     bearerAuth:
       type: apiKey

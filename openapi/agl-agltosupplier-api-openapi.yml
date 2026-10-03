@@ -143,6 +143,13 @@ components:
       - reservationEmail
       - reservationCountry
       type: object
+    ReservationCancel:
+      properties:
+        reservationId:
+          type: string
+      required:
+      - reservationId
+      type: object
     CancelResponse:
       properties:
         data:
@@ -191,13 +198,6 @@ components:
       - rstCd
       - rstMsg
       - statusCode
-      type: object
-    ReservationCancel:
-      properties:
-        reservationId:
-          type: string
-      required:
-      - reservationId
       type: object
   parameters:
     X-Client-Code:

@@ -280,28 +280,15 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    Country:
+    GolfClubFacility:
       type: object
       properties:
         id:
           type: string
         name:
           $ref: '#/components/schemas/MultiLanguageText'
-        continentId:
-          type: string
-    CommonResponse:
-      type: object
-      properties:
-        status:
-          type: string
-          enum:
-          - ok
-          - fail
-        data:
-          type:
-          - object
-          - 'null'
-          description: Payload of the response
+        exists:
+          type: boolean
     MultiLanguageText:
       type: object
       properties:
@@ -317,11 +304,23 @@ components:
           type: string
         es:
           type: string
-    Airport:
+    Country:
       type: object
       properties:
         id:
           type: string
+        name:
+          $ref: '#/components/schemas/MultiLanguageText'
+        continentId:
+          type: string
+    Continent:
+      type: object
+      properties:
+        id:
+          type: string
+          description: string that identifies a continent
+          examples:
+          - Asia
         name:
           $ref: '#/components/schemas/MultiLanguageText'
     City:
@@ -333,15 +332,6 @@ components:
           $ref: '#/components/schemas/MultiLanguageText'
         countryId:
           type: string
-    GolfClubFacility:
-      type: object
-      properties:
-        id:
-          type: string
-        name:
-          $ref: '#/components/schemas/MultiLanguageText'
-        exists:
-          type: boolean
     Region:
       type: object
       properties:
@@ -351,14 +341,24 @@ components:
           $ref: '#/components/schemas/MultiLanguageText'
         countryId:
           type: string
-    Continent:
+    CommonResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+          - ok
+          - fail
+        data:
+          type:
+          - object
+          - 'null'
+          description: Payload of the response
+    Airport:
       type: object
       properties:
         id:
           type: string
-          description: string that identifies a continent
-          examples:
-          - Asia
         name:
           $ref: '#/components/schemas/MultiLanguageText'
   securitySchemes:

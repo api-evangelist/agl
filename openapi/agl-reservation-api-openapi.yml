@@ -61,6 +61,18 @@ components:
           minLength: 1
           type: string
       additionalProperties: false
+    JObjectTripComRequestDto:
+      type: object
+      properties:
+        header:
+          $ref: '#/components/schemas/TripComRequestHeader'
+        body:
+          type:
+          - object
+          - 'null'
+          additionalProperties:
+            $ref: '#/components/schemas/JToken'
+      additionalProperties: false
     JToken:
       type: array
       items:
@@ -77,18 +89,6 @@ components:
       - 7
       type: integer
       format: int32
-    JObjectTripComRequestDto:
-      type: object
-      properties:
-        header:
-          $ref: '#/components/schemas/TripComRequestHeader'
-        body:
-          type:
-          - object
-          - 'null'
-          additionalProperties:
-            $ref: '#/components/schemas/JToken'
-      additionalProperties: false
   securitySchemes:
     Bearer:
       type: http
