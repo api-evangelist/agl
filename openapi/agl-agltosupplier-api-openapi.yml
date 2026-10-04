@@ -74,12 +74,19 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    ReservationResponse:
+    CancelResponse:
       properties:
+        data:
+          properties:
+            cancelDate:
+              type: string
+            cancelPenaltyAmount:
+              type: integer
+            currency:
+              type: string
+          type: object
         isSuccess:
           type: boolean
-        reservationId:
-          type: string
         rstCd:
           type: string
         rstMsg:
@@ -91,6 +98,12 @@ components:
       - rstCd
       - rstMsg
       - statusCode
+      type: object
+    ReservationCancel:
+      properties:
+        reservationId:
+          type: string
+      required:
       - reservationId
       type: object
     ReservationRequest:
@@ -143,38 +156,6 @@ components:
       - reservationEmail
       - reservationCountry
       type: object
-    ReservationCancel:
-      properties:
-        reservationId:
-          type: string
-      required:
-      - reservationId
-      type: object
-    CancelResponse:
-      properties:
-        data:
-          properties:
-            cancelDate:
-              type: string
-            cancelPenaltyAmount:
-              type: integer
-            currency:
-              type: string
-          type: object
-        isSuccess:
-          type: boolean
-        rstCd:
-          type: string
-        rstMsg:
-          type: string
-        statusCode:
-          type: integer
-      required:
-      - isSuccess
-      - rstCd
-      - rstMsg
-      - statusCode
-      type: object
     FailResponse:
       properties:
         isSuccess:
@@ -198,6 +179,25 @@ components:
       - rstCd
       - rstMsg
       - statusCode
+      type: object
+    ReservationResponse:
+      properties:
+        isSuccess:
+          type: boolean
+        reservationId:
+          type: string
+        rstCd:
+          type: string
+        rstMsg:
+          type: string
+        statusCode:
+          type: integer
+      required:
+      - isSuccess
+      - rstCd
+      - rstMsg
+      - statusCode
+      - reservationId
       type: object
   parameters:
     X-Client-Code:

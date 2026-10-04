@@ -280,6 +280,38 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
+    Country:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          $ref: '#/components/schemas/MultiLanguageText'
+        continentId:
+          type: string
+    CommonResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+          - ok
+          - fail
+        data:
+          type:
+          - object
+          - 'null'
+          description: Payload of the response
+    Continent:
+      type: object
+      properties:
+        id:
+          type: string
+          description: string that identifies a continent
+          examples:
+          - Asia
+        name:
+          $ref: '#/components/schemas/MultiLanguageText'
     GolfClubFacility:
       type: object
       properties:
@@ -289,6 +321,15 @@ components:
           $ref: '#/components/schemas/MultiLanguageText'
         exists:
           type: boolean
+    City:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          $ref: '#/components/schemas/MultiLanguageText'
+        countryId:
+          type: string
     MultiLanguageText:
       type: object
       properties:
@@ -304,34 +345,6 @@ components:
           type: string
         es:
           type: string
-    Country:
-      type: object
-      properties:
-        id:
-          type: string
-        name:
-          $ref: '#/components/schemas/MultiLanguageText'
-        continentId:
-          type: string
-    Continent:
-      type: object
-      properties:
-        id:
-          type: string
-          description: string that identifies a continent
-          examples:
-          - Asia
-        name:
-          $ref: '#/components/schemas/MultiLanguageText'
-    City:
-      type: object
-      properties:
-        id:
-          type: string
-        name:
-          $ref: '#/components/schemas/MultiLanguageText'
-        countryId:
-          type: string
     Region:
       type: object
       properties:
@@ -341,19 +354,6 @@ components:
           $ref: '#/components/schemas/MultiLanguageText'
         countryId:
           type: string
-    CommonResponse:
-      type: object
-      properties:
-        status:
-          type: string
-          enum:
-          - ok
-          - fail
-        data:
-          type:
-          - object
-          - 'null'
-          description: Payload of the response
     Airport:
       type: object
       properties:

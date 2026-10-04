@@ -272,304 +272,6 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    TeeGolfers:
-      type: object
-      properties:
-        golfers:
-          type: array
-          description: list of golfers that are playing in this tee time.
-          minItems: 1
-          maxItems: 4
-          items:
-            type: object
-            properties:
-              firstName:
-                type: string
-                description: first name of the golfer
-                examples:
-                - John
-              lastName:
-                type: string
-                description: last name of the golfer
-                examples:
-                - Doe
-              gender:
-                type: string
-                enum:
-                - M
-                - F
-    Payment:
-      type: object
-      properties:
-        id:
-          type: string
-        currency:
-          type: string
-        totalAmount:
-          type: number
-          format: decimal
-          examples:
-          - 156
-        amountLines:
-          type: array
-          items:
-            $ref: '#/components/schemas/Amount'
-        mobile:
-          type: string
-        email:
-          type: string
-        paymentMethod:
-          type: string
-          enum:
-          - CARD_STRIPE
-          - CARD_EXIMPAY
-          - CARD
-          - CASH
-          - AFT
-          description: 'AFT : postpaid'
-    AmountRequest:
-      type: object
-      required:
-      - currency
-      - amountType
-      - amount
-      - amountCents
-      - status
-      properties:
-        reservationId:
-          type: string
-          description: id of the reservation that this amount is associated with. Required for static package reservations.
-        currency:
-          type: string
-        amountType:
-          $ref: '#/components/schemas/AmountType'
-          examples:
-          - teeTimeAmount or teeTimeSumAmount or staticPackageAmount or staticPackageTotalAmount
-        amount:
-          type: number
-          format: decimal
-          examples:
-          - 156
-        amountCents:
-          type: number
-          description: 100x of the amount, to represent cents properly
-          examples:
-          - 15600
-        status:
-          enum:
-          - CHARGED
-          - VOIDED
-    ConfirmRequest:
-      type: object
-      required:
-      - currency
-      - totalAmount
-      - amountLines
-      - email
-      - paymentMethod
-      properties:
-        currency:
-          type: string
-        totalAmount:
-          type: number
-          format: decimal
-          examples:
-          - 156
-        amountLines:
-          type: array
-          items:
-            $ref: '#/components/schemas/AmountRequest'
-        mobile:
-          type: string
-        email:
-          type: string
-        paymentMethod:
-          type: string
-          enum:
-          - CARD_STRIPE
-          - CARD_EXIMPAY
-          - CARD
-          - CASH
-          - AFT
-          description: 'AFT : postpaid'
-    Reservation:
-      type: object
-      properties:
-        reservationNumber:
-          type: string
-        reference:
-          type: string
-        payment:
-          $ref: '#/components/schemas/Payment'
-        charge:
-          $ref: '#/components/schemas/Payment'
-        reservations:
-          type: array
-          items:
-            type: object
-            properties:
-              id:
-                type: string
-              reference:
-                type: string
-              reservationNumber:
-                type: string
-              status:
-                type: string
-                enum:
-                - REQUESTED
-                - ACTIVE
-                - USED
-                - CANCELLED
-              reservationType:
-                type: string
-                enum:
-                - TEE_TIME
-                - PACKAGE
-                - STATIC_PACKAGE
-              golfClubIds:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    golfClubId:
-                      type: string
-                    courseId:
-                      type: string
-              teeTime:
-                allOf:
-                - $ref: '#/components/schemas/TeeTime'
-                - $ref: '#/components/schemas/TeeBooker'
-                - $ref: '#/components/schemas/FlightInfo'
-                - $ref: '#/components/schemas/TeeGolfers'
-              staticPackage:
-                allOf:
-                - type: object
-                  properties:
-                    id:
-                      type: string
-                      description: id of the static package associated with this reservation. Required for static package reservations.
-                    planId:
-                      type: string
-                      description: id of the static package plan associated with this reservation. Required for static package reservations.
-                - $ref: '#/components/schemas/TeeBooker'
-                - $ref: '#/components/schemas/FlightInfo'
-                - $ref: '#/components/schemas/TeeGolfers'
-              cancellationPolicy:
-                $ref: '#/components/schemas/CancellationPolicy'
-    AmountType:
-      type: string
-      enum:
-      - teeTimeAmount
-      - teeTimeSumAmount
-      - staticPackageAmount
-      - staticPackageTotalAmount
-      - cancellationFee
-      - cancellationFeePerc
-      description: type of the amount line. Used to identify the type of amount.
-    ReservationRequest:
-      type: object
-      required:
-      - reservationType
-      properties:
-        reference:
-          type: string
-          description: Reference number for the check reservation, such as ota booking reference number.
-        reservationType:
-          type: string
-          enum:
-          - TEE_TIME
-          - PACKAGE
-          - STATIC_PACKAGE
-          description: Type of the reservation. TEE_TIME for tee time reservation, PACKAGE for package reservation, and STATIC_PACKAGE for static package reservation.
-        teeTime:
-          description: Tee time reservation information. Required for tee time reservations when reservationType is TEE_TIME.
-          allOf:
-          - type: object
-            properties:
-              id:
-                type: string
-                description: id of the tee time associated with this reservation. Required for tee time reservations when reservationType is TEE_TIME.
-            required:
-            - id
-          - $ref: '#/components/schemas/TeeBookerRequest'
-          - $ref: '#/components/schemas/FlightInfo'
-          - $ref: '#/components/schemas/TeeGolfersRequest'
-        staticPackage:
-          allOf:
-          - type: object
-            required:
-            - id
-            - planId
-            properties:
-              id:
-                type: string
-                description: id of the static package associated with this reservation. Required for static package reservations when reservationType is STATIC_PACKAGE.
-              planId:
-                type: string
-                description: id of the static package plan associated with this reservation. Required for static package reservations when reservationType is STATIC_PACKAGE.
-          - $ref: '#/components/schemas/TeeBookerRequest'
-          - $ref: '#/components/schemas/FlightInfo'
-          - $ref: '#/components/schemas/TeeGolfersRequest'
-          description: Static package reservation information. Required for static package reservations when reservationType is STATIC_PACKAGE.
-    CancellationPolicy:
-      type: object
-      properties:
-        currency:
-          type: string
-        policies:
-          type: array
-          items:
-            type: object
-            properties:
-              amountType:
-                $ref: '#/components/schemas/AmountType'
-                examples:
-                - cancellationFee or cancellationFeePerc
-              amount:
-                type: number
-                format: decimal
-                description: Percentage of the cancellation fee or cancellation fee applied after a specific date and time
-                examples:
-                - 50
-              appliesUntil:
-                type: string
-                description: ISO format UTC date time that this cancellation policy applies
-                examples:
-                - 2025-02-22 11:00
-          examples:
-          - - amountType: cancellationFeePerc
-              amount: 50
-              appliesUntil: 2025-02-22 11:00
-            - amountType: cancellationFeePerc
-              amount: 100
-              appliesUntil: 2025-02-30 11:00
-    AcceptedGroupSize:
-      type: number
-      enum:
-      - 1
-      - 2
-      - 3
-      - 4
-      - 5
-    TeeBooker:
-      type: object
-      properties:
-        booker:
-          type: object
-          properties:
-            nationality:
-              type: string
-            firstName:
-              type: string
-            lastName:
-              type: string
-            phone:
-              type: string
-            email:
-              type: string
-            countGolfers:
-              $ref: '#/components/schemas/AcceptedGroupSize'
     Amount:
       type: object
       properties:
@@ -678,19 +380,46 @@ components:
             memo:
               type: string
               description: memo for the flight
-    CommonResponse:
+    AmountRequest:
       type: object
+      required:
+      - currency
+      - amountType
+      - amount
+      - amountCents
+      - status
       properties:
-        status:
+        reservationId:
           type: string
+          description: id of the reservation that this amount is associated with. Required for static package reservations.
+        currency:
+          type: string
+        amountType:
+          $ref: '#/components/schemas/AmountType'
+          examples:
+          - teeTimeAmount or teeTimeSumAmount or staticPackageAmount or staticPackageTotalAmount
+        amount:
+          type: number
+          format: decimal
+          examples:
+          - 156
+        amountCents:
+          type: number
+          description: 100x of the amount, to represent cents properly
+          examples:
+          - 15600
+        status:
           enum:
-          - ok
-          - fail
-        data:
-          type:
-          - object
-          - 'null'
-          description: Payload of the response
+          - CHARGED
+          - VOIDED
+    AcceptedGroupSize:
+      type: number
+      enum:
+      - 1
+      - 2
+      - 3
+      - 4
+      - 5
     TeeTime:
       type: object
       properties:
@@ -730,6 +459,277 @@ components:
               type: number
               examples:
               - 0
+    TeeBooker:
+      type: object
+      properties:
+        booker:
+          type: object
+          properties:
+            nationality:
+              type: string
+            firstName:
+              type: string
+            lastName:
+              type: string
+            phone:
+              type: string
+            email:
+              type: string
+            countGolfers:
+              $ref: '#/components/schemas/AcceptedGroupSize'
+    AmountType:
+      type: string
+      enum:
+      - teeTimeAmount
+      - teeTimeSumAmount
+      - staticPackageAmount
+      - staticPackageTotalAmount
+      - cancellationFee
+      - cancellationFeePerc
+      description: type of the amount line. Used to identify the type of amount.
+    Payment:
+      type: object
+      properties:
+        id:
+          type: string
+        currency:
+          type: string
+        totalAmount:
+          type: number
+          format: decimal
+          examples:
+          - 156
+        amountLines:
+          type: array
+          items:
+            $ref: '#/components/schemas/Amount'
+        mobile:
+          type: string
+        email:
+          type: string
+        paymentMethod:
+          type: string
+          enum:
+          - CARD_STRIPE
+          - CARD_EXIMPAY
+          - CARD
+          - CASH
+          - AFT
+          description: 'AFT : postpaid'
+    CommonResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+          - ok
+          - fail
+        data:
+          type:
+          - object
+          - 'null'
+          description: Payload of the response
+    Reservation:
+      type: object
+      properties:
+        reservationNumber:
+          type: string
+        reference:
+          type: string
+        payment:
+          $ref: '#/components/schemas/Payment'
+        charge:
+          $ref: '#/components/schemas/Payment'
+        reservations:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              reference:
+                type: string
+              reservationNumber:
+                type: string
+              status:
+                type: string
+                enum:
+                - REQUESTED
+                - ACTIVE
+                - USED
+                - CANCELLED
+              reservationType:
+                type: string
+                enum:
+                - TEE_TIME
+                - PACKAGE
+                - STATIC_PACKAGE
+              golfClubIds:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    golfClubId:
+                      type: string
+                    courseId:
+                      type: string
+              teeTime:
+                allOf:
+                - $ref: '#/components/schemas/TeeTime'
+                - $ref: '#/components/schemas/TeeBooker'
+                - $ref: '#/components/schemas/FlightInfo'
+                - $ref: '#/components/schemas/TeeGolfers'
+              staticPackage:
+                allOf:
+                - type: object
+                  properties:
+                    id:
+                      type: string
+                      description: id of the static package associated with this reservation. Required for static package reservations.
+                    planId:
+                      type: string
+                      description: id of the static package plan associated with this reservation. Required for static package reservations.
+                - $ref: '#/components/schemas/TeeBooker'
+                - $ref: '#/components/schemas/FlightInfo'
+                - $ref: '#/components/schemas/TeeGolfers'
+              cancellationPolicy:
+                $ref: '#/components/schemas/CancellationPolicy'
+    ReservationRequest:
+      type: object
+      required:
+      - reservationType
+      properties:
+        reference:
+          type: string
+          description: Reference number for the check reservation, such as ota booking reference number.
+        reservationType:
+          type: string
+          enum:
+          - TEE_TIME
+          - PACKAGE
+          - STATIC_PACKAGE
+          description: Type of the reservation. TEE_TIME for tee time reservation, PACKAGE for package reservation, and STATIC_PACKAGE for static package reservation.
+        teeTime:
+          description: Tee time reservation information. Required for tee time reservations when reservationType is TEE_TIME.
+          allOf:
+          - type: object
+            properties:
+              id:
+                type: string
+                description: id of the tee time associated with this reservation. Required for tee time reservations when reservationType is TEE_TIME.
+            required:
+            - id
+          - $ref: '#/components/schemas/TeeBookerRequest'
+          - $ref: '#/components/schemas/FlightInfo'
+          - $ref: '#/components/schemas/TeeGolfersRequest'
+        staticPackage:
+          allOf:
+          - type: object
+            required:
+            - id
+            - planId
+            properties:
+              id:
+                type: string
+                description: id of the static package associated with this reservation. Required for static package reservations when reservationType is STATIC_PACKAGE.
+              planId:
+                type: string
+                description: id of the static package plan associated with this reservation. Required for static package reservations when reservationType is STATIC_PACKAGE.
+          - $ref: '#/components/schemas/TeeBookerRequest'
+          - $ref: '#/components/schemas/FlightInfo'
+          - $ref: '#/components/schemas/TeeGolfersRequest'
+          description: Static package reservation information. Required for static package reservations when reservationType is STATIC_PACKAGE.
+    ConfirmRequest:
+      type: object
+      required:
+      - currency
+      - totalAmount
+      - amountLines
+      - email
+      - paymentMethod
+      properties:
+        currency:
+          type: string
+        totalAmount:
+          type: number
+          format: decimal
+          examples:
+          - 156
+        amountLines:
+          type: array
+          items:
+            $ref: '#/components/schemas/AmountRequest'
+        mobile:
+          type: string
+        email:
+          type: string
+        paymentMethod:
+          type: string
+          enum:
+          - CARD_STRIPE
+          - CARD_EXIMPAY
+          - CARD
+          - CASH
+          - AFT
+          description: 'AFT : postpaid'
+    TeeBookerRequest:
+      required:
+      - booker
+      type: object
+      properties:
+        booker:
+          type: object
+          required:
+          - firstName
+          - lastName
+          - phone
+          - email
+          - countGolfers
+          properties:
+            nationality:
+              type: string
+            firstName:
+              type: string
+            lastName:
+              type: string
+            phone:
+              type: string
+            email:
+              type: string
+            countGolfers:
+              $ref: '#/components/schemas/AcceptedGroupSize'
+    CancellationPolicy:
+      type: object
+      properties:
+        currency:
+          type: string
+        policies:
+          type: array
+          items:
+            type: object
+            properties:
+              amountType:
+                $ref: '#/components/schemas/AmountType'
+                examples:
+                - cancellationFee or cancellationFeePerc
+              amount:
+                type: number
+                format: decimal
+                description: Percentage of the cancellation fee or cancellation fee applied after a specific date and time
+                examples:
+                - 50
+              appliesUntil:
+                type: string
+                description: ISO format UTC date time that this cancellation policy applies
+                examples:
+                - 2025-02-22 11:00
+          examples:
+          - - amountType: cancellationFeePerc
+              amount: 50
+              appliesUntil: 2025-02-22 11:00
+            - amountType: cancellationFeePerc
+              amount: 100
+              appliesUntil: 2025-02-30 11:00
     TeeGolfersRequest:
       type: object
       required:
@@ -761,32 +761,32 @@ components:
                 enum:
                 - M
                 - F
-    TeeBookerRequest:
-      required:
-      - booker
+    TeeGolfers:
       type: object
       properties:
-        booker:
-          type: object
-          required:
-          - firstName
-          - lastName
-          - phone
-          - email
-          - countGolfers
-          properties:
-            nationality:
-              type: string
-            firstName:
-              type: string
-            lastName:
-              type: string
-            phone:
-              type: string
-            email:
-              type: string
-            countGolfers:
-              $ref: '#/components/schemas/AcceptedGroupSize'
+        golfers:
+          type: array
+          description: list of golfers that are playing in this tee time.
+          minItems: 1
+          maxItems: 4
+          items:
+            type: object
+            properties:
+              firstName:
+                type: string
+                description: first name of the golfer
+                examples:
+                - John
+              lastName:
+                type: string
+                description: last name of the golfer
+                examples:
+                - Doe
+              gender:
+                type: string
+                enum:
+                - M
+                - F
   securitySchemes:
     bearerAuth:
       type: apiKey
