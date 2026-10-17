@@ -37,6 +37,30 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
+    JObjectTripComRequestDto:
+      type: object
+      properties:
+        header:
+          $ref: '#/components/schemas/TripComRequestHeader'
+        body:
+          type:
+          - object
+          - 'null'
+          additionalProperties:
+            $ref: '#/components/schemas/JToken'
+      additionalProperties: false
+    ServiceNameEnum:
+      enum:
+      - 0
+      - 1
+      - 2
+      - 3
+      - 4
+      - 5
+      - 6
+      - 7
+      type: integer
+      format: int32
     TripComRequestHeader:
       required:
       - accountId
@@ -65,30 +89,6 @@ components:
       type: array
       items:
         $ref: '#/components/schemas/JToken'
-    JObjectTripComRequestDto:
-      type: object
-      properties:
-        header:
-          $ref: '#/components/schemas/TripComRequestHeader'
-        body:
-          type:
-          - object
-          - 'null'
-          additionalProperties:
-            $ref: '#/components/schemas/JToken'
-      additionalProperties: false
-    ServiceNameEnum:
-      enum:
-      - 0
-      - 1
-      - 2
-      - 3
-      - 4
-      - 5
-      - 6
-      - 7
-      type: integer
-      format: int32
   securitySchemes:
     Bearer:
       type: http

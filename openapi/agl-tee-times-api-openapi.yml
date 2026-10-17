@@ -130,19 +130,65 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    Course:
+    CommonResponse:
       type: object
       properties:
-        id:
+        status:
+          type: string
+          enum:
+          - ok
+          - fail
+        data:
+          type:
+          - object
+          - 'null'
+          description: Payload of the response
+    AmountType:
+      type: string
+      enum:
+      - teeTimeAmount
+      - teeTimeSumAmount
+      - staticPackageAmount
+      - staticPackageTotalAmount
+      - cancellationFee
+      - cancellationFeePerc
+      description: type of the amount line. Used to identify the type of amount.
+    MultiLanguageText:
+      type: object
+      properties:
+        en:
+          type: string
+        ko:
+          type: string
+        ja:
+          type: string
+        zh:
+          type: string
+        tw:
+          type: string
+        es:
+          type: string
+    TeetimeAmount:
+      type: object
+      properties:
+        currency:
           type: string
           examples:
-          - d229f6afc72e4533ba55a4ee89b0355a
-        name:
-          $ref: '#/components/schemas/MultiLanguageText'
-        teeTimes:
-          type: array
-          items:
-            $ref: '#/components/schemas/TeeTimeWithAmount'
+          - USD
+        amountType:
+          $ref: '#/components/schemas/AmountType'
+          examples:
+          - teeTimeAmount or teeTimeSumAmount or staticPackageAmount or staticPackageTotalAmount
+        amount:
+          type: number
+          format: decimal
+          examples:
+          - 156
+        amountCents:
+          type: number
+          description: 100x of the amount, to represent cents properly
+          examples:
+          - 15600
     TeeTimeWithAmount:
       type: object
       allOf:
@@ -172,6 +218,19 @@ components:
                   - 4
                 amount:
                   $ref: '#/components/schemas/TeetimeAmount'
+    Course:
+      type: object
+      properties:
+        id:
+          type: string
+          examples:
+          - d229f6afc72e4533ba55a4ee89b0355a
+        name:
+          $ref: '#/components/schemas/MultiLanguageText'
+        teeTimes:
+          type: array
+          items:
+            $ref: '#/components/schemas/TeeTimeWithAmount'
     AcceptedGroupSize:
       type: number
       enum:
@@ -219,65 +278,6 @@ components:
               type: number
               examples:
               - 0
-    AmountType:
-      type: string
-      enum:
-      - teeTimeAmount
-      - teeTimeSumAmount
-      - staticPackageAmount
-      - staticPackageTotalAmount
-      - cancellationFee
-      - cancellationFeePerc
-      description: type of the amount line. Used to identify the type of amount.
-    CommonResponse:
-      type: object
-      properties:
-        status:
-          type: string
-          enum:
-          - ok
-          - fail
-        data:
-          type:
-          - object
-          - 'null'
-          description: Payload of the response
-    TeetimeAmount:
-      type: object
-      properties:
-        currency:
-          type: string
-          examples:
-          - USD
-        amountType:
-          $ref: '#/components/schemas/AmountType'
-          examples:
-          - teeTimeAmount or teeTimeSumAmount or staticPackageAmount or staticPackageTotalAmount
-        amount:
-          type: number
-          format: decimal
-          examples:
-          - 156
-        amountCents:
-          type: number
-          description: 100x of the amount, to represent cents properly
-          examples:
-          - 15600
-    MultiLanguageText:
-      type: object
-      properties:
-        en:
-          type: string
-        ko:
-          type: string
-        ja:
-          type: string
-        zh:
-          type: string
-        tw:
-          type: string
-        es:
-          type: string
   parameters:
     CurrencyParam:
       name: currency

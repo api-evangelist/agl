@@ -238,6 +238,27 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
+    Price:
+      properties:
+        additionalTax:
+          type: number
+        caddieFee:
+          type: number
+        cartFee:
+          type: number
+        greenFee:
+          type: number
+        playerCount:
+          type: integer
+        tax:
+          type: number
+        unitPrice:
+          type: number
+      required:
+      - playerCount
+      - greenFee
+      - unitPrice
+      type: object
     GolfClub:
       properties:
         address:
@@ -308,24 +329,21 @@ components:
       - isGuestInfoRequired
       - courses
       type: object
-    Course:
+    HoleInfo:
       properties:
-        courseCode:
-          type: string
-        courseHoleCount:
+        distance:
           type: integer
-        courseName:
+        distanceUnit:
+          type: integer
+        holeName:
           type: string
-        startHole:
+        holeNumber:
+          type: integer
+        par:
           type: integer
       required:
-      - courseCode
-      - courseName
+      - holeNumber
       type: object
-    TeeTimeListData:
-      type: array
-      items:
-        $ref: '#/components/schemas/TeeTimeDailyInfo'
     TeeTimeDailyInfo:
       properties:
         courseCode:
@@ -384,6 +402,50 @@ components:
       - golfClubCode
       - available
       type: object
+    GolfClubListData:
+      type: array
+      items:
+        $ref: '#/components/schemas/GolfClub'
+    RefundPolicy:
+      properties:
+        refundDate:
+          type: integer
+        refundFee:
+          type: integer
+        refundUnit:
+          type: integer
+      required:
+      - refundDate
+      - refundFee
+      - refundUnit
+      type: object
+    Time:
+      properties:
+        startTime:
+          type: string
+        teeTimeCode:
+          type: string
+      required:
+      - startTime
+      type: object
+    TeeTimeListData:
+      type: array
+      items:
+        $ref: '#/components/schemas/TeeTimeDailyInfo'
+    Course:
+      properties:
+        courseCode:
+          type: string
+        courseHoleCount:
+          type: integer
+        courseName:
+          type: string
+        startHole:
+          type: integer
+      required:
+      - courseCode
+      - courseName
+      type: object
     SuccessResponse:
       properties:
         isSuccess:
@@ -408,40 +470,6 @@ components:
       - rstMsg
       - statusCode
       type: object
-    Price:
-      properties:
-        additionalTax:
-          type: number
-        caddieFee:
-          type: number
-        cartFee:
-          type: number
-        greenFee:
-          type: number
-        playerCount:
-          type: integer
-        tax:
-          type: number
-        unitPrice:
-          type: number
-      required:
-      - playerCount
-      - greenFee
-      - unitPrice
-      type: object
-    GolfClubListData:
-      type: array
-      items:
-        $ref: '#/components/schemas/GolfClub'
-    Time:
-      properties:
-        startTime:
-          type: string
-        teeTimeCode:
-          type: string
-      required:
-      - startTime
-      type: object
     FailResponse:
       properties:
         isSuccess:
@@ -465,34 +493,6 @@ components:
       - rstCd
       - rstMsg
       - statusCode
-      type: object
-    RefundPolicy:
-      properties:
-        refundDate:
-          type: integer
-        refundFee:
-          type: integer
-        refundUnit:
-          type: integer
-      required:
-      - refundDate
-      - refundFee
-      - refundUnit
-      type: object
-    HoleInfo:
-      properties:
-        distance:
-          type: integer
-        distanceUnit:
-          type: integer
-        holeName:
-          type: string
-        holeNumber:
-          type: integer
-        par:
-          type: integer
-      required:
-      - holeNumber
       type: object
   parameters:
     X-Supplier-Code:

@@ -280,15 +280,6 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    Country:
-      type: object
-      properties:
-        id:
-          type: string
-        name:
-          $ref: '#/components/schemas/MultiLanguageText'
-        continentId:
-          type: string
     CommonResponse:
       type: object
       properties:
@@ -302,25 +293,15 @@ components:
           - object
           - 'null'
           description: Payload of the response
-    Continent:
-      type: object
-      properties:
-        id:
-          type: string
-          description: string that identifies a continent
-          examples:
-          - Asia
-        name:
-          $ref: '#/components/schemas/MultiLanguageText'
-    GolfClubFacility:
+    Region:
       type: object
       properties:
         id:
           type: string
         name:
           $ref: '#/components/schemas/MultiLanguageText'
-        exists:
-          type: boolean
+        countryId:
+          type: string
     City:
       type: object
       properties:
@@ -345,15 +326,25 @@ components:
           type: string
         es:
           type: string
-    Region:
+    GolfClubFacility:
       type: object
       properties:
         id:
           type: string
         name:
           $ref: '#/components/schemas/MultiLanguageText'
-        countryId:
+        exists:
+          type: boolean
+    Continent:
+      type: object
+      properties:
+        id:
           type: string
+          description: string that identifies a continent
+          examples:
+          - Asia
+        name:
+          $ref: '#/components/schemas/MultiLanguageText'
     Airport:
       type: object
       properties:
@@ -361,6 +352,15 @@ components:
           type: string
         name:
           $ref: '#/components/schemas/MultiLanguageText'
+    Country:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          $ref: '#/components/schemas/MultiLanguageText'
+        continentId:
+          type: string
   securitySchemes:
     bearerAuth:
       type: apiKey
