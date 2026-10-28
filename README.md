@@ -64,40 +64,135 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-AGL Inc. (에이지엘) is a Seoul-headquartered golf technology company, founded in 2019, that operates
-**TIGER GDS** — a global distribution system for golf. Its SaaS platform connects golf club tee-time
-inventory to travel and booking channels in real time across more than 1,000 contracted courses in
-30+ countries, and is the system behind the HeyTeeTime / TIGERBOOKING consumer apps and the Reserve
-with Google golf integration. Offices in Seoul, Tokyo, Brea (California) and Singapore.
+AGL Inc. (에이지엘) is a Seoul-headquartered golf technology company, founded in 2019, that operates TIGER GDS — a global distribution system for golf. Its SaaS platform connects golf club tee-time inventory to travel and booking channels in real time, covering more than 1,000 contracted golf courses across 30+ countries, and is the system behind the HeyTeeTime/TIGERBOOKING consumer apps and the Reserve with Google golf integration. AGL publishes three machine-readable REST contracts on tigergds.com: the AGL OTA API (distribution — code lookups, golf club catalog, tee-time availability, static packages and the full reservation lifecycle), the AGL OPEN API (a bi-directional supplier bridge for golf-club and tee-time registration plus reservation callbacks) and a Trip.com outbound reservation integration. Offices in Seoul, Tokyo, Brea (CA) and Singapore.
 
-## What AGL publishes
+**Areas:** Company · Golf · Travel · Booking · Reservations · Distribution · Tee Times · GDS · Hospitality · Sports · Leisure · South Korea
 
-Three machine-readable REST contracts, all served from `tigergds.com`:
+## AGL on APIs.io
 
-| API | Spec | Ops | Docs |
-|---|---|---|---|
-| AGL OTA API 2.0 | OpenAPI 3.1.1 | 24 | <https://api-doc.tigergds.com/reference> |
-| AGL OPEN API 0.0.1 (supplier bridge) | OpenAPI 3.1.1 | 7 | <https://api-docs-agl-bridgeapi.tigergds.com/reference> |
-| AGL Trip.com Reservation Integration API 1.0 | OpenAPI 3.0.1 | 1 | <https://outboundapi-trip-reserv.tigergds.com/swagger/index.html> |
+Everything profiled for AGL is published on APIs.io rather than in this repository. Start at the provider page — **[apis.io/providers/agl/](https://apis.io/providers/agl/)** — or go straight to one of the APIs or properties below.
 
-None of these is linked from `aglgw.com`, which advertises "API method — Direct API integration"
-on its Golf Club and Partner Channel pages and routes every reader to a partnership form. The
-contracts were found through certificate transparency on `tigergds.com` and are publicly readable.
+### APIs (8)
 
-## Notes for an integrator
+- [AGL AGL To Supplier API](https://apis.io/apis/agl/agl-agltosupplier-api/) — APIs where AGL sends reservation and cancellation requests to suppliers
+- [AGL Codes API](https://apis.io/apis/agl/agl-codes-api/) — The Codes API from AGL — 9 operation(s) for codes.
+- [AGL Golf Clubs API](https://apis.io/apis/agl/agl-golf-clubs-api/) — The Golf Clubs API from AGL — 2 operation(s) for golf clubs.
+- [AGL Reservation API](https://apis.io/apis/agl/agl-reservation-api/) — The Reservation API from AGL — 1 operation(s) for reservation.
+- [AGL Reservations API](https://apis.io/apis/agl/agl-reservations-api/) — The Reservations API from AGL — 6 operation(s) for reservations.
+- [AGL Static Packages API](https://apis.io/apis/agl/agl-static-packages-api/) — The Static Packages API from AGL — 2 operation(s) for static packages.
+- [AGL Supplier To AGL API](https://apis.io/apis/agl/agl-suppliertoagl-api/) — APIs where suppliers send data to AGL (e.g., golf club registration, tee times, etc.)
+- [AGL Tee Times API](https://apis.io/apis/agl/agl-tee-times-api/) — The Tee Times API from AGL — 2 operation(s) for tee times.
 
-- **HTTP 200 is not success on the OTA API.** It declares only `200` responses; failures come back
-  as `CommonResponse.status == "fail"` with codes `FL00`, `FL01` or `ET00` — two of which the
-  specification never defines.
-- **No idempotency key** on any of the ten mutating operations.
-- **Reversal is well covered and the window is data**: `POST /v2/reservation/request` returns a
-  `CancellationPolicy` whose tiers carry `appliesUntil` cut-offs and fee percentages.
-- **Tee times cannot be updated** — AGL's own contract says so; set unavailable, then re-register.
-- **The declared sandbox does not exist**: the AGL OPEN API lists
-  `https://sandbox-agl-bridgeapi.tigergds.com` as its Sandbox Environment and the host returns
-  NXDOMAIN (probed 2026-09-12).
-- No published rate limits, status page, deprecation policy, changelog, SDK, CLI, MCP server or
-  A2A agent card.
+### Published properties
 
-Everything in this repository was assembled from those public surfaces. See `apis.yml` for the
-full artifact index.
+Each property below is a page on APIs.io carrying the machine-readable artifact and what it says.
+
+#### AsyncAPI (1)
+
+Event-driven and webhook contracts.
+
+- [Agl Webhooks](https://apis.io/asyncapis/agl/agl-webhooks/)
+
+#### MCP servers (1)
+
+Model Context Protocol servers that expose the API to agents.
+
+- [agl-tiger-gds](https://apis.io/servers/agl/agl-tiger-gds/)
+
+#### Agentic access (1)
+
+Which operations an agent can call, which act, and which need a human in the loop.
+
+- [Agl Agentic Access](https://apis.io/agentic-access/agl/agl-agentic-access/)
+
+#### Overlays (3)
+
+OpenAPI overlays, including conversational phrasing for each operation.
+
+- [Agl Open Overlay](https://apis.io/overlays/agl/agl-open-overlay/)
+- [Agl Ota Overlay](https://apis.io/overlays/agl/agl-ota-overlay/)
+- [Agl Tripcom Outbound Overlay](https://apis.io/overlays/agl/agl-tripcom-outbound-overlay/)
+
+#### Security (2)
+
+Authentication, trust centre, and vulnerability disclosure.
+
+- [Agl Authentication](https://apis.io/security/agl/agl-authentication/)
+- [Agl Domain Security](https://apis.io/security/agl/agl-domain-security/)
+
+#### Plans and pricing (1)
+
+Published plans, tiers and prices.
+
+- [Agl Plans Pricing](https://apis.io/plans/agl/agl-plans-pricing/)
+
+#### Rate limits (1)
+
+Published request limits.
+
+- [Agl Rate Limits](https://apis.io/rate-limits/agl/agl-rate-limits/)
+
+## Where to find this API
+
+Links to the company's own pages. This repository publishes no copy of their specifications — the canonical document is theirs and lives at the URLs below.
+
+- [Website](https://www.aglgw.com/en/)
+- [Documentation](https://api-doc.tigergds.com/reference)
+- [API reference](https://api-doc.tigergds.com/reference)
+- [Sign up](https://www.tigergds.com/signup/step1)
+- [Support](https://www.aglgw.com/en/partners)
+- [Blog](https://www.aglgw.com/en/contents/news)
+- [GitHub](https://github.com/aglgw)
+
+## API Evangelist rating
+
+**Kin Score 31.2** — thin · rubric 0.24.0 · scored 2026-10-17
+
+| Facet | Score |
+|---|---|
+| Discoverability | 71.4 |
+| Contract quality | 55.1 |
+| Contract governance | 4.5 |
+| Operational transparency | 10.5 |
+| Developer ergonomics | 37.5 |
+| Access clarity | 6.6 |
+
+**Agent readiness 35.0** — agent-ready
+
+| Agent-readiness dimension | Result |
+|---|---|
+| Spec Presence | yes |
+| Agentic Access | derived (partial credit) |
+| Reversibility Documented | documented (partial credit) |
+| MCP Server | — |
+| Auth Clarity | bearer (partial credit) |
+| Idempotency | — |
+| Error Semantics | verified |
+| OpenAPI Examples | partial |
+| Rate Limit Signal | documented (partial credit) |
+| Event Surface Described | yes |
+| Agent Skills | derived (partial credit) |
+| Well Known Catalog | — |
+| Consent Identity | — |
+| Agent Card | — |
+| Dry Run Mode | — |
+| Delegated Identity | — |
+| Protected Resource Metadata | — |
+| Dynamic Client Registration | — |
+| Agentic Commerce | — |
+
+**Regulatory alignment 16.7** — Horizontal (data, software, accessibility, platform)
+
+The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/agl/](https://apis.io/providers/agl/).
+
+## How this profile is made
+
+API Evangelist profiles a company's public API surface the way a developer would find it: the website, developer portal and documentation, the specifications it publishes, its public repositories, and its pricing, status and changelog pages. From that it derives the properties above — contracts split per API, workflows, schemas, collections, governance rules, plans and rate limits — and scores them against the published [Kin Score rubric](https://github.com/api-evangelist/kin-score).
+
+The artifacts are published on [APIs.io](https://apis.io), not in this repository. This repository is the public record for AGL: the place to say something is wrong, missing or out of date, and to ask for a re-score or a removal.
+
+## Open an issue
+
+- **Something about this listing** — a wrong description, a missing API, a stale artifact or a question about the rating: [open an issue on this repository](https://github.com/api-evangelist/agl/issues/new).
+- **A new API, or one that is not in the catalog yet** — [submit it on APIs.io](https://apis.io/add/).
+- **Anything else** — [the APIs.io inbox](https://github.com/api-search/inbox/issues/new) or [info@apievangelist.com](mailto:info@apievangelist.com).
